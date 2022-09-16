@@ -77,12 +77,14 @@ setting for any mode as backup, specify MAJOR-MODE as t."
 		:value-type (list (choice :tag "Stem" string sexp)
 				  (character :tag "Repeat Char")
 				  (boolean :tag "Uniform Style"))))
+				  (boolean :tag "Uniform Style")
+				  (boolean :tag "Omit Overline"))))
 
-(defcustom outli-blend 0.2
-  "Whether to use a blended version of the heading color to
-decorate the initial heading characters.  Either nil for no
-blending, or a floating point number <=1.0, representing the
-fraction of the foreground color to blend into the background."
+(defcustom outli-blend 0.25
+  "Blended color to decorate initial heading background.
+Either nil for no blended background, or a floating point number
+<=1.0, representing the fraction of the heading foreground color
+to blend with the background."
   :group  'outli
   :type '(choice nil float))
 
