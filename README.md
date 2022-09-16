@@ -2,7 +2,7 @@
 Simple and stylish comment-based outlines for Emacs.
 ![image](https://user-images.githubusercontent.com/93749/190755666-69ca250c-476b-41c9-a26a-f9c12d167c99.png)
 
--outli_ is a simple Emacs outliner for code, documents, and more which styles your headings, and emulates org-mode navigation and structure editing.  It is simple by design, and provides just a few key features:
+_outli_ is a simple Emacs outliner for code, documents, and more which styles your headings, and emulates org-mode navigation and structure editing.  It is simple by design, and provides just a few key features:
 
 - Configurable heading syntax based on the concept of a `stem` (fixed first characters) and `repeat-char` (the number of which determines a heading's depth).  Example level two headers include classics such as `;;;;` or `# **`, but anything's possible.
 - Header style options including color-matched overline and blended background color for the initial heading info.
@@ -25,7 +25,7 @@ Not yet in a package database; simply clone and point `use-package` at the corre
 You should probably not enable `outli` in org-mode, or with other packages which operate on headings like `outshine`. 
 
 # Related Packages
-- outline-mode: The built in mode for outlining documents on which _outli_ builds. 
+- outline-minor-mode: The built-in minor mode for outlining documents on which _outli_ builds. 
 - [orgmode](https://orgmode.org): The do-everything outliner mode.
 - [outshine](https://github.com/alphapapa/outshine): A featureful outline-mode enhancement from which `outli` took its inspiration.  Has many legacy features. 
 - [outorg](https://github.com/alphapapa/outorg): Required by outshine, this mode enabled editing comment blocks in temporary org-mode buffers (the inverse of code-blocks in org).
