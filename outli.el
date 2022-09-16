@@ -198,17 +198,16 @@ command."
     (run-hooks 'outline-insert-heading-hook)))
 
 ;;;; Fontification 
-(defun outli-fontify-colors (face)
-  "Compute blended background color for headline match.
-Returns cons of foreground and background color."
+(defun outli-fontify-background-blend (fg)
+  "Compute blended background color for headline match based on foreground FG.
+Returns blended background color."
   (let* ((frac (- 1.0 outli-blend))
-	 (bg (frame-parameter nil 'background-color))
-	 (fg (face-attribute face :foreground nil t)))
-    (list fg (apply #'color-rgb-to-hex (apply #'cl-mapcar (lambda (a b)
-							    (+ (* a frac)
-							       (* b (- 1.0 frac))))
-					      (mapcar #'color-name-to-rgb
-						      `(,bg ,fg)))))))
+	 (bg (frame-parameter nil 'background-color)))
+    (apply #'color-rgb-to-hex (apply #'cl-mapcar (lambda (a b)
+						   (+ (* a frac)
+						      (* b (- 1.0 frac))))
+				     (mapcar #'color-name-to-rgb
+					     `(,bg ,fg))))))
 (defvar-local outli-font-lock-keywords nil)
 
 (defun outli-fontify-headlines (&optional uniform nobar)
@@ -220,16 +219,19 @@ differently.  If NOBAR is non-nil, omit the overlines."
    (setq outli-font-lock-keywords
 	 (cl-loop for i downfrom 8 to 1
 		  for ol-face = (intern-soft (format "org-level-%d" i))
+		  for fg = (face-attribute ol-face :foreground nil t)
 		  with ot = (unless nobar '(:overline t))
 		  for header-highlight = `(4 '(:inherit ,ol-face :extend t ,@ot) t)
 		  for extra-highlight =
-		  (if outli-blend
-		      (seq-let (fg blend) (outli-fontify-colors ol-face)
-			(let ((ofg (unless nobar `(:overline ,fg))))
+		  
+		  (let ((ofg (unless nobar `(:overline ,fg))))
+		    (if outli-blend
+			(let ((blend (outli-fontify-background-blend fg)))
 			  (if uniform
 			      `((1 '(:background ,blend ,@ofg) append))
 			    `((3 '(:inherit ,ol-face :background ,blend ,@ot) t)
-			      (2 '(:background ,blend ,@ofg) append))))))
+			      (2 '(:background ,blend ,@ofg) append))))
+		      `((1 '(,@ofg) append))))
 		  for hrx = (rx-to-string `(and
 					    bol
 					    (group (group (literal ,outli-heading-stem))
