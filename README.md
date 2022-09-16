@@ -24,6 +24,22 @@ Not yet in a package database; simply clone and point `use-package` at the corre
 
 You should probably not enable `outli` in org-mode, or with other packages which operate on headings like `outshine`. 
 
+# Customization
+
+## Headline style
+
+The main variable to customize is `outli-heading-config`, where you can set the step and repeat char, and influence the styling, including whether to style the stem and repeat chars the same, and whether to include the overline.  The custom variable `outli-blend` controls whether a blended background is used to start the headline.
+
+## Speed keys
+
+Customize `outli-speed-commands` to alter or disable speed keys, which work at the beginning of heading lines only.  
+
+# Tips
+
+- You can use arbitrary expressions for the stem and repeat chars; they'll get evaluated at run-time.
+- It's useful to target high-level modes like prog-mode or text-mode from which many modes inherit (see [mode-minder](https://github.com/jdtsmith/mode-minder) to get a list of your major mode heirarchy).
+- Try out the `h` key at headline start: it folds everything up to be no deeper than the current header's level. 
+
 # Related Packages
 - outline-minor-mode: The built-in minor mode for outlining documents on which _outli_ builds. 
 - [orgmode](https://orgmode.org): The do-everything outliner mode.
