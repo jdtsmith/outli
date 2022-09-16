@@ -22,7 +22,7 @@ Not yet in a package database; simply clone and point `use-package` at the corre
   :hook ((prog-mode text-mode) . outli-mode)) ; or whichever modes you prefer
 ```
 
-You should probably not enable `outli` in org-mode, or with other packages which operate on headings like `outshine`. 
+You should probably not enable outli in org-mode, or with other packages which operate on headings, like outshine. 
 
 # Customization
 
