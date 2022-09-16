@@ -277,5 +277,6 @@ command."
 		      imenu-generic-expression)
 	  (outli-fontify-headlines))
 	(outline-minor-mode 1))
+    (outline-minor-mode -1)
     (outli-unfontify)))
 
