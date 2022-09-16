@@ -4,7 +4,7 @@ Simple and stylish comment-based outlines for Emacs.
 
 `outli` is a simple Emacs outliner for code, documents, and more which styles your headings, and emulates org-mode navigation and structure editing.  It is simple by design, and provides just a few key features:
 
-- Configurable heading syntax based on the concept of a `stem` (fixed first characters) and `repeat-char` (the number of which determines a heading's depth).  Examples level two headers include classics such as `;;;;` or `# **`, but anything's possible.
+- Configurable heading syntax based on the concept of a `stem` (fixed first characters) and `repeat-char` (the number of which determines a heading's depth).  Example level two headers include classics such as `;;;;` or `# **`, but anything's possible.
 - Header style options including color-matched overline and blended background color for the initial heading info.
 - `Tab` and `Shift-Tab` work just like you'd expect from org-mode to toggle headings or document visibility. 
 - _Speed keys_ mirroring thos of org-mode for easy navigation, visibility, and structure editing on the beginning of a headline.  Hit `?` for the list of available keys.   Additions include `h` to hide sublevels below this current, and `1`-`5` to specify such a level directly. 
