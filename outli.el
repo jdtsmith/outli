@@ -50,17 +50,33 @@
   :group 'outlines)
 
 (defcustom outli-heading-config
-  '((emacs-lisp-mode ";;" ?\;)
-    (t (concat (if comment-start (substring comment-start -1) "#") " ") ?*))
-  "Formatting information for comment headings.
-An alist with key MAJOR-MODE, heading initial STEM (a string),
-and heading REPEAT-CHAR (a character).  STEM and REPEAT-CHAR are
-eval'd if an expression.  To provide a default setting for any
-mode as backup, specify MAJOR-MODE as t."
+  '((emacs-lisp-mode ";;" ?\; t)
+    (TeX-latex-mode "%%" ?% t)
+    (t (let* ((c (or comment-start "#"))
+	      (space (unless (eq (aref c (1- (length c))) ?\s) " ")))
+	 (concat c space))
+       ?*))
+  "Formatting configuration for outli comment headings.
+The configuratoin is an alist with each element of the form
+
+ (MAJOR-MODE STEM REPEAT-CHAR UNIFORM-STYLE)
+
+with:
+
+- key MAJOR-MODE (a mode symbol, or t)
+- initial string STEM
+- REPEAT-CHAR, a character the count of which denotes heading depth
+- optional boolean UNIFORM-STYLE, which indicates that stem and
+  repeat char part of the heading should be styled the
+  same (default nil).
+
+STEM and REPEAT-CHAR are eval'd if expressions.  To provide a default
+setting for any mode as backup, specify MAJOR-MODE as t."
   :group 'outli
   :type '(alist :key-type (choice (const :tag "Default" t) (symbol :tag "Major Mode"))
 		:value-type (list (choice :tag "Stem" string sexp)
-				  (character :tag "Repeat Char"))))
+				  (character :tag "Repeat Char")
+				  (boolean :tag "Uniform Style"))))
 
 (defcustom outli-blend 0.2
   "Whether to use a blended version of the heading color to
@@ -123,21 +139,22 @@ command."
 (defvar-local outli-heading-char nil
   "Character used to indicate heading depth.  Defaults to commment-start.")
 
+;;;; Outline Headings
 (defun outli-heading-regexp ()
   (if (and outli-heading-stem outli-heading-char)
       (rx-to-string `(group ,outli-heading-stem (+ ,outli-heading-char) ?\s))))
-
-(defun outli-at-heading ()
-  (and (bolp) (looking-at outline-regexp)))
-
-;;; Some kinda delightful design
 
 (defun outli-indent-level ()
   (or (cdr (assoc (match-string 0) outline-heading-alist))
       (- (match-end 0) (match-beginning 0) (length outli-heading-stem) 1)))
 
-;;;; A test 
+(defun outli--on-heading (cmd)
+  (if (outline-on-heading-p) cmd))
 
+(defun outli--at-heading (cmd)
+  (and (bolp) (looking-at outline-regexp) cmd))
+
+;;;; Outline Commands
 (defun outli-toggle-narrow-to-subtree ()
   "Narrow to sub-tree or widen if already narrowed."
   (interactive)
@@ -174,38 +191,43 @@ command."
     (run-hooks 'outline-insert-heading-hook)))
 
 ;;;; Fontification 
-(defun outli-fontify-blend-attributes (face)
-  "Compute blended background and overline attributes for headline match."
+(defun outli-fontify-colors (face)
+  "Compute blended background color for headline match.
+Returns cons of foreground and background color."
   (let* ((frac (- 1.0 outli-blend))
 	 (bg (frame-parameter nil 'background-color))
-	 (fg (face-attribute face :foreground nil t))
-	 (blend (apply #'color-rgb-to-hex
-		       (apply #'cl-mapcar
-			      (lambda (a b)
-				(+ (* a frac)
-				   (* b (- 1.0 frac))))
-			      (mapcar #'color-name-to-rgb
-				      `(,bg ,fg))))))
-    `(:background ,blend :overline ,fg)))
-
+	 (fg (face-attribute face :foreground nil t)))
+    (list fg (apply #'color-rgb-to-hex (apply #'cl-mapcar (lambda (a b)
+							    (+ (* a frac)
+							       (* b (- 1.0 frac))))
+					      (mapcar #'color-name-to-rgb
+						      `(,bg ,fg)))))))
 (defvar-local outli-font-lock-keywords nil)
-(defun outli-fontify-headlines ()
-  "Calculate and enable font-lock regexps to match headings."
-  (font-lock-add-keywords nil
+
+(defun outli-fontify-headlines (&optional uniform)
+  "Calculate and enable font-lock regexps to match headings.
+If UNIFORM is non-nil, do not style the stem and depth chars
+differently."
+  (font-lock-add-keywords
+   nil
    (setq outli-font-lock-keywords
 	 (cl-loop for i downfrom 8 to 1
 		  for ol-face = (intern-soft (format "org-level-%d" i))
-		  for face-attr = `(:inherit ,ol-face :extend t :overline t)
-		  for header-highlight = `(2 ',face-attr t)
+		  for header-highlight = `(4 '(:inherit ,ol-face :extend t :overline t) t)
 		  for extra-highlight =
 		  (if outli-blend
-		      `((1 ',(outli-fontify-blend-attributes ol-face)
-			   append)))
-		  collect `(,(format ;; N.B.: the space is important
-			      "^\\(%s%c\\{%d\\}\\)\\( .*\n?\\)" 
-			      outli-heading-stem outli-heading-char i)
-			    ,header-highlight
-			    ,@extra-highlight))))
+		      (seq-let (fg blend) (outli-fontify-colors ol-face)
+			(if uniform
+			    `((1 '(:background ,blend :overline ,fg) append))
+			  `((3 '(:inherit ,ol-face :background ,blend :overline t) t)
+			    (2 '(:background ,blend :overline ,fg) append)))))
+		  for hrx = (rx-to-string `(and
+					    bol
+					    (group (group (literal ,outli-heading-stem))
+						   (group (= ,i ,outli-heading-char)))
+					    (group ?\s (* nonl) (or ?\n eol)))
+					  t)
+		  collect `(,hrx ,header-highlight ,@extra-highlight))))
   (mapc (lambda (x) (cl-pushnew x font-lock-extra-managed-props))
 	`(extend overline ,@(if outli-blend '(background))))
   (font-lock-flush))
@@ -225,9 +247,6 @@ command."
     (mapc #'org-print-speed-command outli-speed-commands))
   (with-current-buffer "*Help*"
     (setq truncate-lines t)))
-
-(defun outli--on-heading (cmd)
-  (if (outline-on-heading-p) cmd))
 
 (defvar outli-mode-map
   (let ((map (make-sparse-keymap)))
@@ -252,10 +271,10 @@ command."
 			      ((functionp com) com)
 			      ((consp com) (eval `(lambda () (interactive) ,com))))))
 		   (define-key outli-mode-map (kbd key)
-		     `(menu-item "" ,func :filter outli--on-heading))))
+		     `(menu-item "" ,func :filter outli--at-heading))))
 
 	;; Setup the heading matchers
-	(pcase-let ((`(_ ,stem ,rchar)
+	(pcase-let ((`(_ ,stem ,rchar ,uniform)
 		     (or (seq-find
 			  (lambda (e) (derived-mode-p (car e)))
 			  outli-heading-config)
@@ -264,8 +283,7 @@ command."
 	  (setq outli-heading-char
 		(or (if (consp rchar) (eval rchar) (if (characterp rchar) rchar)) ?*)
 		outli-heading-stem
-		(or (if (consp stem) (eval stem) (if (stringp stem) stem))
-		    (concat (if comment-start (substring comment-start -1) "#") " "))
+		(or (and (consp stem) (eval stem)) (and (stringp stem) stem) "# ")
 		outline-regexp (outli-heading-regexp)
 		outline-heading-end-regexp "\n"
 		outline-level #'outli-indent-level)
@@ -277,7 +295,7 @@ command."
 			 outline-heading-alist))
 	  (cl-pushnew `("Headings" ,(rx bol (regexp outline-regexp) (group-n 2 (* nonl) eol)) 2)
 		      imenu-generic-expression)
-	  (outli-fontify-headlines))
+	  (outli-fontify-headlines uniform))
 	(outline-minor-mode 1))
     (outline-minor-mode -1)
     (outli-unfontify)))
