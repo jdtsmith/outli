@@ -57,26 +57,29 @@
 	 (concat c space))
        ?*))
   "Formatting configuration for outli comment headings.
-The configuratoin is an alist with each element of the form
+The configuration is an alist with each element of the form
 
- (MAJOR-MODE STEM REPEAT-CHAR UNIFORM-STYLE)
+ (MAJOR-MODE STEM REPEAT-CHAR UNIFORM-STYLE NO-BAR)
 
 with:
 
 - key MAJOR-MODE (a mode symbol, or t)
 - initial string STEM
-- REPEAT-CHAR, a character the count of which denotes heading depth
-- optional boolean UNIFORM-STYLE, which indicates that stem and
-  repeat char part of the heading should be styled the
-  same (default nil).
+- REPEAT-CHAR, a character the count of which denotes heading
+  depth
+- optional boolean UNIFORM-STYLE: if non-nil, stem and repeat
+  char part of the heading should both get stem-styling.
+- optional boolean NO-BAR: if non-nil, omit the overline styling
+  for this mode.
 
-STEM and REPEAT-CHAR are eval'd if expressions.  To provide a default
-setting for any mode as backup, specify MAJOR-MODE as t."
+STEM and REPEAT-CHAR are eval'd if expressions.  To provide a
+default setting for any mode as backup, specify MAJOR-MODE as
+t. Note that order matters: settings from the first matching mode
+are used. "
   :group 'outli
   :type '(alist :key-type (choice (const :tag "Default" t) (symbol :tag "Major Mode"))
 		:value-type (list (choice :tag "Stem" string sexp)
 				  (character :tag "Repeat Char")
-				  (boolean :tag "Uniform Style"))))
 				  (boolean :tag "Uniform Style")
 				  (boolean :tag "Omit Overline"))))
 
@@ -206,23 +209,25 @@ Returns cons of foreground and background color."
 						      `(,bg ,fg)))))))
 (defvar-local outli-font-lock-keywords nil)
 
-(defun outli-fontify-headlines (&optional uniform)
+(defun outli-fontify-headlines (&optional uniform nobar)
   "Calculate and enable font-lock regexps to match headings.
 If UNIFORM is non-nil, do not style the stem and depth chars
-differently."
+differently.  If NOBAR is non-nil, omit the overlines."
   (font-lock-add-keywords
    nil
    (setq outli-font-lock-keywords
 	 (cl-loop for i downfrom 8 to 1
 		  for ol-face = (intern-soft (format "org-level-%d" i))
-		  for header-highlight = `(4 '(:inherit ,ol-face :extend t :overline t) t)
+		  with ot = (unless nobar '(:overline t))
+		  for header-highlight = `(4 '(:inherit ,ol-face :extend t ,@ot) t)
 		  for extra-highlight =
 		  (if outli-blend
 		      (seq-let (fg blend) (outli-fontify-colors ol-face)
-			(if uniform
-			    `((1 '(:background ,blend :overline ,fg) append))
-			  `((3 '(:inherit ,ol-face :background ,blend :overline t) t)
-			    (2 '(:background ,blend :overline ,fg) append)))))
+			(let ((ofg (unless nobar `(:overline ,fg))))
+			  (if uniform
+			      `((1 '(:background ,blend ,@ofg) append))
+			    `((3 '(:inherit ,ol-face :background ,blend ,@ot) t)
+			      (2 '(:background ,blend ,@ofg) append))))))
 		  for hrx = (rx-to-string `(and
 					    bol
 					    (group (group (literal ,outli-heading-stem))
@@ -276,12 +281,12 @@ differently."
 		     `(menu-item "" ,func :filter outli--at-heading))))
 
 	;; Setup the heading matchers
-	(pcase-let ((`(_ ,stem ,rchar ,uniform)
+	(pcase-let ((`(_ ,stem ,rchar ,uniform ,nobar)
 		     (or (seq-find
 			  (lambda (e) (derived-mode-p (car e)))
 			  outli-heading-config)
 			 (assq t outli-heading-config)
-			 '(t nil nil))))
+			 '(t nil nil nil))))
 	  (setq outli-heading-char
 		(or (if (consp rchar) (eval rchar) (if (characterp rchar) rchar)) ?*)
 		outli-heading-stem
@@ -297,7 +302,7 @@ differently."
 			 outline-heading-alist))
 	  (cl-pushnew `("Headings" ,(rx bol (regexp outline-regexp) (group-n 2 (* nonl) eol)) 2)
 		      imenu-generic-expression)
-	  (outli-fontify-headlines uniform))
+	  (outli-fontify-headlines uniform nobar))
 	(outline-minor-mode 1))
     (outline-minor-mode -1)
     (outli-unfontify)))
