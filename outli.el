@@ -25,14 +25,16 @@
 
 ;;; Commentary:
 
-;; outli provides outli-mode, a simple helper for outline-minor-mode
+;; outli-mode us a simple minor-mode overlaying outline-minor-mode
 ;; which supports special comment lines as level-aware outline
 ;; headings.  outli styles headings for easy level recognition and
-;; provides a few org-mode-like capabilities, including speed keys
-;; activated at headings.
+;; provides a org-mode-like header navigation and editing
+;; capabilities, including speed keys activated at the start of
+;; headings.
 ;; 
 ;; Customize `outli-heading-config' to set the "stem" and repeated
-;; character for comment-based headings.
+;; character for comment-based headings and influence how the headings
+;; are styled.
 
 ;;; Code:
 
