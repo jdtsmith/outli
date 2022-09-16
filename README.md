@@ -1,8 +1,6 @@
 # outli
 Simple and stylish comment-based outlines for Emacs.
-
-
-
+![image](https://user-images.githubusercontent.com/93749/190738254-10e41f49-e450-48dc-bc3a-16772d7fe4c3.png)
 
 `outli` is a simple outliner for code, documents, etc. in Emacs which styles your headings, and emulates org-mode navigation and structure editing. It is simple by design, and provides just a few key features:
 
