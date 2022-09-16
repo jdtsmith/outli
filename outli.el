@@ -282,3 +282,7 @@ command."
     (outline-minor-mode -1)
     (outli-unfontify)))
 
+;;;; Footer
+(provide 'outli)
+
+;;; outli.el ends here
