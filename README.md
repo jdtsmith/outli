@@ -44,5 +44,5 @@ Customize `outli-speed-commands` to alter or disable speed keys, which work at t
 - outline-minor-mode: The built-in minor mode for outlining documents on which _outli_ builds. 
 - [orgmode](https://orgmode.org): The do-everything outliner mode.
 - [outshine](https://github.com/alphapapa/outshine): A featureful outline-mode enhancement from which `outli` took its inspiration.  Has many legacy features. 
-- [outorg](https://github.com/alphapapa/outorg): Required by outshine, this mode enabled editing comment blocks in temporary org-mode buffers (the inverse of code-blocks in org).
+- [outorg](https://github.com/alphapapa/outorg): Required by outshine, this mode enables editing comment blocks in temporary org-mode buffers (the inverse of code-blocks in org).
 - See [more related packages for org-like behavior outside of org](https://orgmode.org/worg/org-tutorials/org-outside-org.html). 
