@@ -216,6 +216,7 @@ command."
   (setq outli-font-lock-keywords nil)
   (font-lock-flush))
 
+;;;; Key Bindings
 (defun outli-speed-command-help ()
   "Show the available speed commands."
   (interactive)
@@ -237,10 +238,11 @@ command."
     (define-key map (kbd "S-<tab>") #'outline-cycle-buffer)
     map))
 
+;;;; Outli mode 
 ;;;###autoload
 (define-minor-mode outli-mode
   "Simple outline mode interaction based on comment-headings."
-   :keymap outli-mode-map
+  :keymap outli-mode-map
   (if outli-mode
       (progn
 	;; Speed keys
