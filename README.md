@@ -31,6 +31,10 @@ The main variable to customize is `outli-heading-config`, where you can set the 
 ## Speed keys
 Customize `outli-speed-commands` to alter or disable speed keys, which work at the beginning of heading lines only.  
 
+# FAQ
+- **How does this relate to outline-minor-mode?**  It's mostly a convenient wrapper around functionality that is already built-in, adding a few things like `narrow-to-subtree` and `insert-heading-respect-content` (ala org). And of course the speed-key bindings, automatic comments-as-header patterns, and styling.  
+- **How does this relate to outshine?**  Mostly just conceptually.  Outshine also provides (different) speed keys, for example.  And a lot more, much of which isn't as relevant to modern emacs.
+
 # Tips
 - You can use arbitrary expressions for the stem and repeat chars; they'll get evaluated at run-time.
 - It's useful to target high-level modes like prog-mode or text-mode from which many modes inherit (see [mode-minder](https://github.com/jdtsmith/mode-minder) to get a list of your major mode heirarchy).
