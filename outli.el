@@ -61,7 +61,7 @@
   "Formatting configuration for outli comment headings.
 The configuration is an alist with each element of the form
 
- (MAJOR-MODE STEM REPEAT-CHAR UNIFORM-STYLE NO-BAR)
+ (MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR)
 
 with:
 
@@ -69,8 +69,9 @@ with:
 - initial string STEM
 - REPEAT-CHAR, a character the count of which denotes heading
   depth
-- optional boolean UNIFORM-STYLE: if non-nil, stem and repeat
-  char part of the heading should both get stem-styling.
+- optional STYLE: If the symbol 'none, no styling of any kind is
+  applied to headings.  If otherwise non-nil, the stem and repeat
+  character parts of the heading both get identical stem-styling.
 - optional boolean NO-BAR: if non-nil, omit the overline styling
   for this mode.
 
@@ -82,7 +83,10 @@ are used. "
   :type '(alist :key-type (choice (const :tag "Default" t) (symbol :tag "Major Mode"))
 		:value-type (list (choice :tag "Stem" string sexp)
 				  (character :tag "Repeat Char")
-				  (boolean :tag "Uniform Style")
+				  (choice :tag "Style"
+					  (const :tag "No Styling" 'none)
+					  (const :tag "Uniform Style" t)
+					  (const :tag "Default Style" nil))
 				  (boolean :tag "Omit Overline"))))
 
 (defcustom outli-blend 0.25
@@ -210,38 +214,40 @@ Returns blended background color."
 					     `(,bg ,fg))))))
 (defvar-local outli-font-lock-keywords nil)
 
-(defun outli-fontify-headlines (&optional uniform nobar)
+(defun outli-fontify-headlines (&optional style nobar)
   "Calculate and enable font-lock regexps to match headings.
-If UNIFORM is non-nil, do not style the stem and depth chars
-differently.  If NOBAR is non-nil, omit the overlines."
-  (font-lock-add-keywords
-   nil
-   (setq outli-font-lock-keywords
-	 (cl-loop for i downfrom 8 to 1
-		  for ol-face = (intern-soft (format "org-level-%d" i))
-		  for fg = (face-attribute ol-face :foreground nil t)
-		  with ot = (unless nobar '(:overline t))
-		  for header-highlight = `(4 '(:inherit ,ol-face :extend t ,@ot) t)
-		  for extra-highlight =
+If STYLE is non-nil, do not style the stem and depth chars
+differently.  If it is the symbol 'none, omit all styling.  If
+NOBAR is non-nil, omit the overlines."
+  (unless (eq style 'none)
+    (font-lock-add-keywords
+     nil
+     (setq outli-font-lock-keywords
+	   (cl-loop for i downfrom 8 to 1
+		    for ol-face = (intern-soft (format "org-level-%d" i))
+		    for fg = (face-attribute ol-face :foreground nil t)
+		    with ot = (unless nobar '(:overline t))
+		    for header-highlight = `(4 '(:inherit ,ol-face :extend t ,@ot) t)
+		    for extra-highlight =
 		  
-		  (let ((ofg (unless nobar `(:overline ,fg))))
-		    (if outli-blend
-			(let ((blend (outli-fontify-background-blend fg)))
-			  (if uniform
-			      `((1 '(:background ,blend ,@ofg) append))
-			    `((3 '(:inherit ,ol-face :background ,blend ,@ot) t)
-			      (2 '(:background ,blend ,@ofg) append))))
-		      `((1 '(,@ofg) append))))
-		  for hrx = (rx-to-string `(and
-					    bol
-					    (group (group (literal ,outli-heading-stem))
-						   (group (= ,i ,outli-heading-char)))
-					    (group ?\s (* nonl) (or ?\n eol)))
-					  t)
-		  collect `(,hrx ,header-highlight ,@extra-highlight))))
-  (mapc (lambda (x) (cl-pushnew x font-lock-extra-managed-props))
-	`(extend overline ,@(if outli-blend '(background))))
-  (font-lock-flush))
+		    (let ((ofg (unless nobar `(:overline ,fg))))
+		      (if outli-blend
+			  (let ((blend (outli-fontify-background-blend fg)))
+			    (if style
+				`((1 '(:background ,blend ,@ofg) append))
+			      `((3 '(:inherit ,ol-face :background ,blend ,@ot) t)
+				(2 '(:background ,blend ,@ofg) append))))
+			`((1 '(,@ofg) append))))
+		    for hrx = (rx-to-string `(and
+					      bol
+					      (group (group (literal ,outli-heading-stem))
+						     (group (= ,i ,outli-heading-char)))
+					      (group ?\s (* nonl) (or ?\n eol)))
+					    t)
+		    collect `(,hrx ,header-highlight ,@extra-highlight))))
+    (mapc (lambda (x) (cl-pushnew x font-lock-extra-managed-props))
+	  `(extend overline ,@(if outli-blend '(background))))
+    (font-lock-flush)))
 
 (defun outli-unfontify ()
   "Remove existing fontification."
@@ -285,7 +291,7 @@ differently.  If NOBAR is non-nil, omit the overlines."
 		     `(menu-item "" ,func :filter outli--at-heading))))
 
 	;; Setup the heading matchers
-	(pcase-let ((`(_ ,stem ,rchar ,uniform ,nobar)
+	(pcase-let ((`(_ ,stem ,rchar ,style ,nobar)
 		     (or (seq-find
 			  (lambda (e) (derived-mode-p (car e)))
 			  outli-heading-config)
@@ -306,7 +312,7 @@ differently.  If NOBAR is non-nil, omit the overlines."
 			 outline-heading-alist))
 	  (cl-pushnew `("Headings" ,(rx bol (regexp outline-regexp) (group-n 2 (* nonl) eol)) 2)
 		      imenu-generic-expression)
-	  (outli-fontify-headlines uniform nobar))
+	  (outli-fontify-headlines style nobar))
 	(outline-minor-mode 1))
     (outline-minor-mode -1)
     (outli-unfontify)))
