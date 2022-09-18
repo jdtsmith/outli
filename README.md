@@ -34,16 +34,16 @@ Customize `outli-speed-commands` to alter or disable speed keys, which work at t
 # FAQ
 - **How does this relate to outline-minor-mode?**  It's mostly a convenient wrapper around functionality that is already built-in, adding a few things like `narrow-to-subtree` and `insert-heading-respect-content` (ala org). And of course the speed-key bindings, automatic comments-as-header patterns, and styling.  
 - **How does this relate to outshine?**  Mostly just conceptually.  Outshine also provides (different) speed keys, for example.  And a lot more, much of which isn't as relevant to modern emacs.  _outli_ is a _much_ smaller package. 
-- **What is the syntax of `outli-heading-config`?** It's an _alist_, each entry of which is like:
+- **What is the syntax of `outli-heading-config`?** It's an _alist_, each entry of which looks like:
 
     `(MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR)`.
 	
-  I recommend using the customize interface: `M-x customize-variable outli-heading-config`.  But it may help to know:
-    - `MAJOR-MODE`: A symbol for a major mode, or parent mode from which the current mode inherits, like `text-mode`.
-    - `STEM`: A string like `"# "`: the fixed "stem" of the headline pattern.  Can also be an elisp expression which evaluates to a string.
-    - `REPEAT-CHAR`: A _character_ like `?*`: the repeating character which specifies the level of a headline.  Can also be an elisp expression which evaluates to a character. 
-    - `STYLE`: A style flag: `nil` for default styling, `none` for no styling, and `t` for uniform styling between stem and repeat char.
-    - `NO-BAR`: A flag for the overline bar: if non-`nil`, omit the overline.
+  I recommend using the customize interface to configure outli: `M-x customize-group outli`.  But it may help to know:
+    - `MAJOR-MODE`: A symbol for a major mode, or parent mode from which the current mode inherits, like `'text-mode` (note: omit the single apostrophe in the customize interface: it knows it's a symbol).
+    - `STEM`: A string like `"# "`: the fixed "stem" of the headline pattern (omit quotes in customize interface)..  Can also be an elisp expression which evaluates to a string. 
+    - `REPEAT-CHAR`: A _character_ like `?*`: the repeating character which specifies the level of a headline (again: no `?` needed in customize, just type the character).  Can also be an elisp expression which evaluates to a character. 
+    - `STYLE`: A style flag: `nil` for default styling, `'none` for no styling, and `t` for uniform styling between stem and repeat char.  Can be omitted (defaults to `nil`).
+    - `NO-BAR`: A flag for the overline bar: if non-`nil`, omit the overline.  Can be omitted (defaults to `nil`).
 
 # Tips
 - You can use arbitrary expressions for the stem and repeat chars; they'll get evaluated at run-time.
