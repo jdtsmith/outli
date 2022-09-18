@@ -40,7 +40,7 @@ Customize `outli-speed-commands` to alter or disable speed keys, which work at t
 	
   I recommend using the customize interface to configure outli: `M-x customize-group outli`.  But it may help to know:
     - `MAJOR-MODE`: A symbol for a major mode, or parent mode from which the current mode inherits, like `'text-mode` (note: omit the single apostrophe in the customize interface: it knows it's a symbol).
-    - `STEM`: A string like `"# "`: the fixed "stem" of the headline pattern (omit quotes in customize interface)..  Can also be an elisp expression which evaluates to a string. 
+    - `STEM`: A string like `"# "`: the fixed "stem" of the headline pattern (omit quotes in customize interface).  Can also be an elisp expression which evaluates to a string.
     - `REPEAT-CHAR`: A _character_ like `?*`: the repeating character which specifies the level of a headline (again: no `?` needed in customize, just type the character).  Can also be an elisp expression which evaluates to a character. 
     - `STYLE`: A style flag: `nil` for default styling, `'none` for no styling, and `t` for uniform styling between stem and repeat char.  Can be omitted (defaults to `nil`).
     - `NO-BAR`: A flag for the overline bar: if non-`nil`, omit the overline.  Can be omitted (defaults to `nil`).
