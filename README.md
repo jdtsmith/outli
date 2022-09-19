@@ -32,8 +32,8 @@ The main variable to customize is `outli-heading-config`, where you can set the 
 Customize `outli-speed-commands` to alter or disable speed keys, which work at the beginning of heading lines only.  
 
 # FAQ
-- **How does this relate to outline-minor-mode?**  It's mostly a convenient wrapper around functionality that is already built-in, adding a few things like `narrow-to-subtree` and `insert-heading-respect-content` (ala org). And of course the speed-key bindings, automatic comments-as-header patterns, and styling.  
-- **How does this relate to outshine?**  Mostly just conceptually.  Outshine also provides (different) speed keys, for example.  And a lot more, much of which isn't as relevant to modern emacs.  _outli_ is a _much_ smaller package. 
+- **How does this relate to outline-minor-mode?**  _outli_ is mostly a convenient wrapper around functionality that is already built-in, adding a few things like `narrow-to-subtree` and `insert-heading-respect-content` (ala org). And of course the speed-key bindings, automatic comments-as-header patterns, and styling.  
+- **How does this relate to outshine?**  Mostly just conceptually.  Outshine also provides (different) speed keys, for example.  And a lot more, much of which isn't as relevant to modern emacs.  Since it builds on the built-in capabilities of outline-minor-mode, _outli_ is a _much_ smaller package. 
 - **What is the syntax of `outli-heading-config`?** It's an _alist_, each entry of which looks like:
 
     `(MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR)`.
