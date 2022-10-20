@@ -22,7 +22,7 @@ Not yet in a package database; simply clone and point `use-package` at the corre
   :hook ((prog-mode text-mode) . outli-mode)) ; or whichever modes you prefer
 ```
 
-You should probably not enable outli in org-mode, or with other packages which operate on headings, like outshine. 
+You should probably not enable outli in org-mode (which by default is prevented), or with other packages which operate on headings, like outshine. 
 
 # Customization
 ## Headline style
@@ -37,7 +37,7 @@ Customize `outli-speed-commands` to alter or disable speed keys, which work at t
   _outli_ is mostly a convenient wrapper around functionality that is already built-in, adding a few things like `narrow-to-subtree` and `insert-heading-respect-content` (ala org). And of course the speed-key bindings, automatic comments-as-header patterns, and styling.  
 - **How does this relate to outshine?**  
 
-  Mostly just conceptually.  Outshine also provides (different) speed keys, for example.  And a lot more, much of which isn't as relevant to modern emacs.  Since it builds on the built-in capabilities of outline-minor-mode, _outli_ is a _much_ smaller package. 
+  Mostly just conceptually.  Outshine also provides (different) speed keys, for example.  And a lot more, much of which isn't as relevant to modern emacs.  Since it builds more direclty on the built-in capabilities of outline-minor-mode, _outli_ is a _much_ smaller/simpler package. 
 
 - **What is the syntax of `outli-heading-config`?** 
 
@@ -56,6 +56,7 @@ Customize `outli-speed-commands` to alter or disable speed keys, which work at t
 - You can use arbitrary expressions for the stem and repeat chars; they'll get evaluated at run-time.
 - It's useful to target high-level modes like prog-mode or text-mode from which many modes inherit (see [mode-minder](https://github.com/jdtsmith/mode-minder) to get a list of your major mode heirarchy).
 - Try out the `h` key at headline start: it folds everything up to be no deeper than the current header's level. 
+- To prevent outli from being enabled in a given mode (or family of derived modes), just include `(MODE . nil)` in `outli-heading-config` (by default, org-mode is excluded in this way). 
 
 # Related Packages
 - outline-minor-mode: The built-in minor mode for outlining documents on which _outli_ builds. 
