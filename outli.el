@@ -5,7 +5,7 @@
 ;; Author: J.D. Smith <jdtsmith@gmail.com>
 ;; URL: https://github.com/jdtsmith/outli
 ;; Package-Requires: ((emacs "27.1"))
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Keywords: convenience, outlines, Org
 
 ;;; License:
@@ -47,23 +47,24 @@
 
 ;;;; Variables 
 (defgroup outli nil
-  "Simple outline comment tools."
+  "Simple comment outlining."
   :tag "Outli"
   :group 'outlines)
 
 (defcustom outli-heading-config
   '((emacs-lisp-mode ";;" ?\; t)
     (tex-mode "%%" ?% t)
+    (org-mode . nil)
     (t (let* ((c (or comment-start "#"))
 	      (space (unless (eq (aref c (1- (length c))) ?\s) " ")))
 	 (concat c space))
        ?*))
   "Formatting configuration for outli comment headings.
-The configuration is an alist with each element of the form
+The configuration is an alist with each element in one of two forms:
 
  (MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR)
 
-with:
+with entries for the first form:
 
 - key MAJOR-MODE (a mode symbol, or t)
 - initial string STEM
@@ -75,19 +76,28 @@ with:
 - optional boolean NO-BAR: if non-nil, omit the overline styling
   for this mode.
 
+or
+
+ (MAJOR-MODE . nil) 
+
+which will disable outli in any modes derived from this mode.
+
 STEM and REPEAT-CHAR are eval'd if expressions.  To provide a
 default setting for any mode as backup, specify MAJOR-MODE as
-t. Note that order matters: settings from the first matching mode
-are used. "
+t. Note that ordering is important, as settings from the first
+matching mode are used. "
   :group 'outli
   :type '(alist :key-type (choice (const :tag "Default" t) (symbol :tag "Major Mode"))
-		:value-type (list (choice :tag "Stem" string sexp)
-				  (character :tag "Repeat Char")
-				  (choice :tag "Style"
-					  (const :tag "No Styling" 'none)
-					  (const :tag "Uniform Style" t)
-					  (const :tag "Default Style" nil))
-				  (boolean :tag "Omit Overline"))))
+		:value-type
+		(choice (const :tag "Disable" nil)
+			(list :tag "Configure"
+			      (choice :tag "Stem" string sexp)
+			      (character :tag "Repeat Char")
+			      (choice :tag "Style"
+				      (const :tag "No Styling" 'none)
+				      (const :tag "Uniform Style" t)
+				      (const :tag "Default Style" nil))
+			      (boolean :tag "Omit Overline")))))
 
 (defcustom outli-blend 0.25
   "Blended color to decorate initial heading background.
@@ -280,40 +290,42 @@ NOBAR is non-nil, omit the overlines."
   "Simple outline mode interaction based on comment-headings."
   :keymap outli-mode-map
   (if outli-mode
-      (progn
-	;; Speed keys
-	(cl-loop for (key . com) in outli-speed-commands do
-		 (when-let ((func
-			     (cond
-			      ((functionp com) com)
-			      ((consp com) (eval `(lambda () (interactive) ,com))))))
-		   (define-key outli-mode-map (kbd key)
-		     `(menu-item "" ,func :filter outli--at-heading))))
+      (let  ((config (seq-find
+		      (lambda (e) (derived-mode-p (car e)))
+		      outli-heading-config)))
+	(if (and config (eq (cdr config) nil))
+	    (setq outli-mode nil) 	; Mode explicitly disabled
+	  ;; Speed keys
+	  (cl-loop for (key . com) in outli-speed-commands do
+		   (when-let ((func
+			       (cond
+				((functionp com) com)
+				((consp com) (eval `(lambda () (interactive) ,com))))))
+		     (define-key outli-mode-map (kbd key)
+		       `(menu-item "" ,func :filter outli--at-heading))))
 
-	;; Setup the heading matchers
-	(pcase-let ((`(_ ,stem ,rchar ,style ,nobar)
-		     (or (seq-find
-			  (lambda (e) (derived-mode-p (car e)))
-			  outli-heading-config)
-			 (assq t outli-heading-config)
-			 '(t nil nil nil))))
-	  (setq outli-heading-char
-		(or (if (consp rchar) (eval rchar) (if (characterp rchar) rchar)) ?*)
-		outli-heading-stem
-		(or (and (consp stem) (eval stem)) (and (stringp stem) stem) "# ")
-		outline-regexp (outli-heading-regexp)
-		outline-heading-end-regexp "\n"
-		outline-level #'outli-indent-level)
-	  ;; pre-seed the level alist for efficiency
-	  (cl-loop for level downfrom 8 to 1 do
-		   (push (cons (concat outli-heading-stem
-				       (make-string level outli-heading-char) " ")
-			       level)
-			 outline-heading-alist))
-	  (cl-pushnew `("Headings" ,(rx bol (regexp outline-regexp) (group-n 2 (* nonl) eol)) 2)
-		      imenu-generic-expression)
-	  (outli-fontify-headlines style nobar))
-	(outline-minor-mode 1))
+	  ;; Setup the heading matchers
+	  (pcase-let ((`(_ ,stem ,rchar ,style ,nobar)
+		       (or config
+			   (assq t outli-heading-config)
+			   '(t nil nil nil))))
+	    (setq outli-heading-char
+		  (or (if (consp rchar) (eval rchar) (if (characterp rchar) rchar)) ?*)
+		  outli-heading-stem
+		  (or (and (consp stem) (eval stem)) (and (stringp stem) stem) "# ")
+		  outline-regexp (outli-heading-regexp)
+		  outline-heading-end-regexp "\n"
+		  outline-level #'outli-indent-level)
+	    ;; pre-seed the level alist for efficiency
+	    (cl-loop for level downfrom 8 to 1 do
+		     (push (cons (concat outli-heading-stem
+					 (make-string level outli-heading-char) " ")
+				 level)
+			   outline-heading-alist))
+	    (cl-pushnew `("Headings" ,(rx bol (regexp outline-regexp) (group-n 2 (* nonl) eol)) 2)
+			imenu-generic-expression)
+	    (outli-fontify-headlines style nobar))
+	  (outline-minor-mode 1)))
     (outline-minor-mode -1)
     (outli-unfontify)))
 

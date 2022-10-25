@@ -43,7 +43,10 @@ Customize `outli-speed-commands` to alter or disable speed keys, which work at t
 
   It's an _alist_, each entry of which looks like:
 
-    `(MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR)`.
+    `(MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR)` to configure a mode.
+  or
+  
+    `(MAJOR-MODE . nil)` to explicity prevent outli from running in this mode.
 	
   I recommend using the customize interface to configure outli: `M-x customize-group outli`.  But it may help to know:
     - `MAJOR-MODE`: A symbol for a major mode, or parent mode from which the current mode inherits, like `'text-mode` (note: omit the single apostrophe in the customize interface: it knows it's a symbol).
