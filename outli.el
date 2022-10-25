@@ -216,12 +216,14 @@ command."
   "Compute blended background color for headline match based on foreground FG.
 Returns blended background color."
   (let* ((frac (- 1.0 outli-blend))
-	 (bg (frame-parameter nil 'background-color)))
-    (apply #'color-rgb-to-hex (apply #'cl-mapcar (lambda (a b)
-						   (+ (* a frac)
-						      (* b (- 1.0 frac))))
-				     (mapcar #'color-name-to-rgb
-					     `(,bg ,fg))))))
+	 (bg (frame-parameter nil 'background-color))
+	 (cols (mapcar #'color-name-to-rgb `(,bg ,fg))))
+    (if (cl-every (lambda (c) (and (consp c) (cl-every #'numberp c))) cols)
+	(apply #'color-rgb-to-hex
+	       (apply #'cl-mapcar (lambda (a b)
+				    (+ (* a frac)
+				       (* b (- 1.0 frac))))
+		      cols)))))
 (defvar-local outli-font-lock-keywords nil)
 
 (defun outli-fontify-headlines (&optional style nobar)
