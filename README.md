@@ -2,7 +2,7 @@
 Simple and stylish comment-based outlines for Emacs.
 ![image](https://user-images.githubusercontent.com/93749/190755666-69ca250c-476b-41c9-a26a-f9c12d167c99.png)
 
-_outli_ is a simple Emacs outliner for code, documents, and more which styles your headings, and emulates org-mode navigation and structure editing.  It is based on the built-in outline-minor-mode and is simple by design, providing just a few key features:
+_outli_ is a simple Emacs outliner for code, documents, and more which provides heirarchical hide/show, styles your headings, and emulates org-mode navigation and structure editing.  It is based on the built-in outline-minor-mode and is simple by design, providing just a few key additional features:
 
 - Configurable heading syntax based on the concept of a `stem` (fixed first characters) and `repeat-char` (the number of which determines a heading's depth).  Example level two headers include classics such as `;;;;` or `# **`, but anything's possible.
 - Header style options including color-matched overline and blended background color for the initial heading info.
