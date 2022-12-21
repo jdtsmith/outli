@@ -26,7 +26,7 @@ You should probably not enable outli in org-mode (which by default is prevented)
 
 # Customization
 ## Headline style
-The main variable to customize is `outli-heading-config`, where you can set the step and repeat char, and influence the styling, including whether to style the stem and repeat chars the same, whether to include the overline, or whether to omit styling altogether.  The custom variable `outli-blend` controls whether a blended background is used to start the headline.
+The main variable to customize is `outli-heading-config`, where you can set the _stem_ and _repeat char_, and influence the styling, including whether to style the stem and repeat chars the same, whether to include the overline, or whether to omit styling altogether.  The custom variable `outli-blend` controls whether a blended background is used to start the headline.
 
 ## Speed keys
 Customize `outli-speed-commands` to alter or disable speed keys, which work at the beginning of heading lines only.  
