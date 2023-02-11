@@ -99,6 +99,11 @@ matching mode are used. "
 				      (const :tag "Default Style" nil))
 			      (boolean :tag "Omit Overline")))))
 
+(defcustom outli-allow-indented-headlines t
+  "Whether to allow initial space at the beginning of the line."
+  :group  'outli
+  :type 'boolean)
+
 (defcustom outli-blend 0.25
   "Blended color to decorate initial heading background.
 Either nil for no blended background, or a floating point number
@@ -162,18 +167,21 @@ command."
 
 ;;;; Outline Headings
 (defun outli-heading-regexp ()
-  (if (and outli-heading-stem outli-heading-char)
-      (rx-to-string `(group ,outli-heading-stem (+ ,outli-heading-char) ?\s))))
+  (when (and outli-heading-stem outli-heading-char)
+    (rx-to-string `(and ,@(if outli-allow-indented-headlines '((* space)))
+		    (group ,outli-heading-stem (+ ,outli-heading-char) ?\s)))))
 
 (defun outli-indent-level ()
-  (or (cdr (assoc (match-string 0) outline-heading-alist))
-      (- (match-end 0) (match-beginning 0) (length outli-heading-stem) 1)))
+  (if-let ((match (match-string 1)))
+      (or (cdr (assoc match outline-heading-alist))
+	(- (length match) (length outli-heading-stem) 1))))
 
 (defun outli--on-heading (cmd)
   (if (outline-on-heading-p) cmd))
 
 (defun outli--at-heading (cmd)
-  (and (bolp) (looking-at outline-regexp) cmd))
+  (and (or (bolp) (eq (current-column) (current-indentation)))
+       (looking-at outline-regexp) cmd))
 
 ;;;; Outline Commands
 (defun outli-toggle-narrow-to-subtree ()
@@ -211,7 +219,7 @@ command."
       (save-excursion (newline-and-indent)))
     (run-hooks 'outline-insert-heading-hook)))
 
-;;;; Fontification 
+   ;;;; Fontification
 (defun outli-fontify-background-blend (fg)
   "Compute blended background color for headline match based on foreground FG.
 Returns blended background color."
@@ -250,12 +258,13 @@ NOBAR is non-nil, omit the overlines."
 			      `((3 '(:inherit ,ol-face :background ,blend ,@ot) t)
 				(2 '(:background ,blend ,@ofg) append))))
 			`((1 '(,@ofg) append))))
-		    for hrx = (rx-to-string `(and
-					      bol
-					      (group (group (literal ,outli-heading-stem))
-						     (group (= ,i ,outli-heading-char)))
-					      (group ?\s (* nonl) (or ?\n eol)))
-					    t)
+		    for hrx = (rx-to-string
+			       `(and
+				 bol ,@(if outli-allow-indented-headlines '((* space)))
+				 (group (group (literal ,outli-heading-stem))
+					(group (= ,i ,outli-heading-char)))
+				 (group ?\s (* nonl) (or ?\n eol)))
+			       t)
 		    collect `(,hrx ,header-highlight ,@extra-highlight))))
     (mapc (lambda (x) (cl-pushnew x font-lock-extra-managed-props))
 	  `(extend overline ,@(if outli-blend '(background))))
@@ -331,7 +340,7 @@ NOBAR is non-nil, omit the overlines."
     (outline-minor-mode -1)
     (outli-unfontify)))
 
-;;;; Footer
+;;;; footer
 (provide 'outli)
 
 ;;; outli.el ends here
