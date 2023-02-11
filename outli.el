@@ -105,7 +105,7 @@ Either nil for no blended background, or a floating point number
 <=1.0, representing the fraction of the heading foreground color
 to blend with the background."
   :group  'outli
-  :type '(choice nil float))
+  :type '(choice (const :tag "Disable" nil) float))
 
 (defcustom outli-speed-commands
   '(("Outline Navigation")
