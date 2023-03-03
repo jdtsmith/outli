@@ -2,7 +2,7 @@
 Simple and stylish comment-based outlines for Emacs.
 ![image](https://user-images.githubusercontent.com/93749/190755666-69ca250c-476b-41c9-a26a-f9c12d167c99.png)
 
-_outli_ is a simple Emacs outliner for code, documents, and more which provides heirarchical hide/show, styles your headings, and emulates org-mode navigation and structure editing.  It is based on the built-in outline-minor-mode and is simple by design, providing just a few key additional features:
+_outli_ is a simple Emacs outliner for code, documents, and more which provides heirarchical hide/show, styles your headings, and emulates org-mode navigation and structure editing.  It is based on the built-in `outline-minor-mode` and is simple by design, providing just a few key additional features beyond what outline already offers:
 
 - Configurable heading syntax based on the concept of a `stem` (fixed first characters) and `repeat-char` (the number of which determines a heading's depth).  Example level-two headers include classics such as `;;;;` and `# **`, but anything's possible.
 - Header style options including color-matched overline and blended background color for the initial heading info.
@@ -26,7 +26,14 @@ You should probably not enable outli in org-mode (which by default is prevented)
 
 # Customization
 ## Headline style
-The main variable to customize is `outli-heading-config`, where you can set the _stem_ and _repeat char_, and influence the styling, including whether to style the stem and repeat chars the same, whether to include the overline, or whether to omit styling altogether.  The custom variable `outli-blend` controls whether a blended background is used to start the headline.
+The main variable to customize is `outli-heading-config`, where you can set the _stem_ and _repeat char_, and influence the styling, including whether to style the stem and repeat chars the same, whether to include the overline, or whether to omit styling altogether.  The custom variable `outli-blend` controls whether a blended background is used to start the headline.  
+
+Configured defaults are:
+
+- **emacs-lisp-mode**: stem `;;`, repeat-char `;`
+- **tex-mode**: `%%`, `%`
+- **org-mode**: disabled
+- **others**: `comment-start` + a space, `*`
 
 ## Speed keys
 Customize `outli-speed-commands` to alter or disable speed keys, which work at the beginning of heading lines only.  
