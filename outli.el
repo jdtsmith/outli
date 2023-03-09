@@ -62,7 +62,7 @@
   "Formatting configuration for outli comment headings.
 The configuration is an alist with each element in one of two forms:
 
- (MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR)
+ (MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR H-LEVELS REVERSE)
 
 with entries for the first form:
 
@@ -75,6 +75,11 @@ with entries for the first form:
   character parts of the heading both get identical stem-styling.
 - optional boolean NO-BAR: if non-nil, omit the overline styling
   for this mode.
+- optional positive integer H-LEVELS: the number of levels to use.
+  By default Outli uses 8 levels of heading.
+- optional boolean REVERSE: if non-nil, more important headings
+  have longer strings. For example: level 1 *****, level 2 ****,
+  level 3 ***.
 
 or
 
@@ -97,7 +102,9 @@ matching mode are used. "
 				      (const :tag "No Styling" 'none)
 				      (const :tag "Uniform Style" t)
 				      (const :tag "Default Style" nil))
-			      (boolean :tag "Omit Overline")))))
+			      (boolean :tag "Omit Overline")
+                              (natnum :tag "No. Levels")
+                              (boolean :tag "Reverse Headings")))))
 
 (defcustom outli-blend 0.25
   "Blended color to decorate initial heading background.
@@ -159,6 +166,12 @@ command."
 
 (defvar-local outli-heading-char nil
   "Character used to indicate heading depth.  Defaults to commment-start.")
+
+(defvar-local outli-heading-levels nil
+  "Number of outline levels to use. Defaults to ")
+
+(defvar-local outli-headings-reverse nil
+  "Whether to reverse the ordering of headings so that longer headings equate to lower-numbered headings.")
 
 ;;;; Outline Headings
 (defun outli-heading-regexp ()
@@ -235,7 +248,7 @@ NOBAR is non-nil, omit the overlines."
     (font-lock-add-keywords
      nil
      (setq outli-font-lock-keywords
-	   (cl-loop for i downfrom 8 to 1
+	   (cl-loop for i downfrom outli-heading-levels to 1
 		    for ol-face = (intern-soft (format "org-level-%d" i))
 		    for fg = (face-attribute ol-face :foreground nil t)
 		    with ot = (unless nobar '(:overline t))
@@ -307,22 +320,25 @@ NOBAR is non-nil, omit the overlines."
 		       `(menu-item "" ,func :filter outli--at-heading))))
 
 	  ;; Setup the heading matchers
-	  (pcase-let ((`(_ ,stem ,rchar ,style ,nobar)
+	  (pcase-let ((`(_ ,stem ,rchar ,style ,nobar ,hlevels ,reverse)
 		       (or config
 			   (assq t outli-heading-config)
-			   '(t nil nil nil))))
+			   '(t nil nil nil 8 nil))))
 	    (setq outli-heading-char
 		  (or (if (consp rchar) (eval rchar) (if (characterp rchar) rchar)) ?*)
 		  outli-heading-stem
 		  (or (and (consp stem) (eval stem)) (and (stringp stem) stem) "# ")
+                  outli-heading-levels (or hlevels 8)
+                  outli-headings-reverse (or reverse nil)
 		  outline-regexp (outli-heading-regexp)
 		  outline-heading-end-regexp "\n"
 		  outline-level #'outli-indent-level)
 	    ;; pre-seed the level alist for efficiency
-	    (cl-loop for level downfrom 8 to 1 do
+            (setq outline-heading-alist nil)
+	    (cl-loop for level downfrom outli-heading-levels to 1 do
 		     (push (cons (concat outli-heading-stem
 					 (make-string level outli-heading-char) " ")
-				 level)
+				 (if outli-headings-reverse (- (1+ outli-heading-levels) level) level))
 			   outline-heading-alist))
 	    (cl-pushnew `("Headings" ,(rx bol (regexp outline-regexp) (group-n 2 (* nonl) eol)) 2)
 			imenu-generic-expression)
