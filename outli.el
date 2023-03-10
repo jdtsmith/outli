@@ -62,7 +62,7 @@
   "Formatting configuration for outli comment headings.
 The configuration is an alist with each element in one of two forms:
 
- (MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR H-LEVELS REVERSE)
+ (MAJOR-MODE STEM REPEAT-CHAR STYLE NO-BAR H-LEVELS)
 
 with entries for the first form:
 
@@ -77,9 +77,6 @@ with entries for the first form:
   for this mode.
 - optional positive integer H-LEVELS: the number of levels to use.
   By default Outli uses 8 levels of heading.
-- optional boolean REVERSE: if non-nil, more important headings
-  have longer strings. For example: level 1 *****, level 2 ****,
-  level 3 ***.
 
 or
 
@@ -103,8 +100,7 @@ matching mode are used."
 				      (const :tag "Uniform Style" t)
 				      (const :tag "Default Style" nil))
 			      (boolean :tag "Omit Overline")
-                              (natnum :tag "No. Levels")
-                              (boolean :tag "Reverse Headings")))))
+                              (natnum :tag "No. Levels")))))
 
 (defcustom outli-blend 0.25
   "Blended color to decorate initial heading background.
@@ -168,7 +164,7 @@ command."
   "Character used to indicate heading depth.  Defaults to commment-start.")
 
 (defvar-local outli-heading-levels nil
-  "Number of outline levels to use. Defaults to ")
+  "Number of outline levels to use.  Defaults to 8")
 
 (defvar-local outli-headings-reverse nil
   "Whether to reverse the ordering of headings so that longer headings equate to lower-numbered headings.")
@@ -328,7 +324,7 @@ NOBAR is non-nil, omit the overlines."
 		       `(menu-item "" ,func :filter outli--at-heading))))
 
 	  ;; Setup the heading matchers
-	  (pcase-let ((`(_ ,stem ,rchar ,style ,nobar ,hlevels ,reverse)
+	  (pcase-let ((`(_ ,stem ,rchar ,style ,nobar ,hlevels)
 		       (or config
 			   (assq t outli-heading-config)
 			   '(t nil nil nil 8 nil))))
@@ -337,7 +333,6 @@ NOBAR is non-nil, omit the overlines."
 		  outli-heading-stem
 		  (or (and (consp stem) (eval stem)) (and (stringp stem) stem) "# ")
                   outli-heading-levels (or hlevels 8)
-                  outli-headings-reverse (or reverse nil)
 		  outline-regexp (outli-heading-regexp)
 		  outline-heading-end-regexp "\n"
 		  outline-level #'outli-indent-level)
