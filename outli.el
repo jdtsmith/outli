@@ -250,12 +250,13 @@ NOBAR is non-nil, omit the overlines."
 			      `((3 '(:inherit ,ol-face :background ,blend ,@ot) t)
 				(2 '(:background ,blend ,@ofg) append))))
 			`((1 '(,@ofg) append))))
-		    for hrx = (rx-to-string `(and
-					      bol
-					      (group (group (literal ,outli-heading-stem))
-						     (group (= ,i ,outli-heading-char)))
-					      (group ?\s (* nonl) (or ?\n eol)))
-					    t)
+		    for hrx = (rx-to-string
+			       `(and
+				 bol
+				 (group (group (literal ,outli-heading-stem))
+					(group (= ,i ,outli-heading-char)))
+				 (group ?\s (* nonl) (or ?\n eol)))
+			       t)
 		    collect `(,hrx ,header-highlight ,@extra-highlight))))
     (mapc (lambda (x) (cl-pushnew x font-lock-extra-managed-props))
 	  `(extend overline ,@(if outli-blend '(background))))
