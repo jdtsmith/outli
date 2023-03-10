@@ -173,7 +173,14 @@ command."
   (if (outline-on-heading-p) cmd))
 
 (defun outli--at-heading (cmd)
-  (and (bolp) (looking-at outline-regexp) cmd))
+  (and
+   (if (bolp)
+       (looking-at outline-regexp)
+     (and (save-excursion
+	    (forward-line 0)
+	    (looking-at outline-regexp))
+	  (>= (match-end 0) (point))))
+   cmd))
 
 ;;;; Outline Commands
 (defun outli-toggle-narrow-to-subtree ()
