@@ -179,7 +179,7 @@ command."
      (and (save-excursion
 	    (forward-line 0)
 	    (looking-at outline-regexp))
-	  (>= (match-end 0) (point))))
+	  (> (match-end 0) (point))))
    cmd))
 
 ;;;; Outline Commands
