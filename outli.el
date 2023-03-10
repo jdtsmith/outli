@@ -83,9 +83,9 @@ or
 which will disable outli in any modes derived from this mode.
 
 STEM and REPEAT-CHAR are eval'd if expressions.  To provide a
-default setting for any mode as backup, specify MAJOR-MODE as
-t. Note that ordering is important, as settings from the first
-matching mode are used. "
+default setting for any mode as backup, specify MAJOR-MODE as t.
+Note that ordering is important, as settings from the first
+matching mode are used."
   :group 'outli
   :type '(alist :key-type (choice (const :tag "Default" t) (symbol :tag "Major Mode"))
 		:value-type
