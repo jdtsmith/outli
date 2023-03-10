@@ -327,7 +327,7 @@ NOBAR is non-nil, omit the overlines."
 	  (pcase-let ((`(_ ,stem ,rchar ,style ,nobar ,hlevels)
 		       (or config
 			   (assq t outli-heading-config)
-			   '(t nil nil nil 8 nil))))
+			   '(t nil nil nil 8))))
 	    (setq outli-heading-char
 		  (or (if (consp rchar) (eval rchar) (if (characterp rchar) rchar)) ?*)
 		  outli-heading-stem
