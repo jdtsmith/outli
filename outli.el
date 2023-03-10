@@ -167,7 +167,7 @@ command."
   "Number of outline levels to use.  Defaults to 8")
 
 (defvar-local outli-headings-reverse nil
-  "Whether to reverse the ordering of headings so that longer headings equate to lower-numbered headings.")
+  "Whether to reverse ordering of headings so longer headings are higher level.")
 
 ;;;; Outline Headings
 (defun outli-heading-regexp ()
