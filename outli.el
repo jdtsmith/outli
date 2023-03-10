@@ -88,9 +88,9 @@ or
 which will disable outli in any modes derived from this mode.
 
 STEM and REPEAT-CHAR are eval'd if expressions.  To provide a
-default setting for any mode as backup, specify MAJOR-MODE as
-t. Note that ordering is important, as settings from the first
-matching mode are used. "
+default setting for any mode as backup, specify MAJOR-MODE as t.
+Note that ordering is important, as settings from the first
+matching mode are used."
   :group 'outli
   :type '(alist :key-type (choice (const :tag "Default" t) (symbol :tag "Major Mode"))
 		:value-type
@@ -186,7 +186,14 @@ command."
   (if (outline-on-heading-p) cmd))
 
 (defun outli--at-heading (cmd)
-  (and (bolp) (looking-at outline-regexp) cmd))
+  (and
+   (if (bolp)
+       (looking-at outline-regexp)
+     (and (save-excursion
+	    (forward-line 0)
+	    (looking-at outline-regexp))
+	  (>= (match-end 0) (point))))
+   cmd))
 
 ;;;; Outline Commands
 (defun outli-toggle-narrow-to-subtree ()
@@ -263,12 +270,13 @@ NOBAR is non-nil, omit the overlines."
 			      `((3 '(:inherit ,ol-face :background ,blend ,@ot) t)
 				(2 '(:background ,blend ,@ofg) append))))
 			`((1 '(,@ofg) append))))
-		    for hrx = (rx-to-string `(and
-					      bol
-					      (group (group (literal ,outli-heading-stem))
-						     (group (= ,i ,outli-heading-char)))
-					      (group ?\s (* nonl) (or ?\n eol)))
-					    t)
+		    for hrx = (rx-to-string
+			       `(and
+				 bol
+				 (group (group (literal ,outli-heading-stem))
+					(group (= ,i ,outli-heading-char)))
+				 (group ?\s (* nonl) (or ?\n eol)))
+			       t)
 		    collect `(,hrx ,header-highlight ,@extra-highlight))))
     (mapc (lambda (x) (cl-pushnew x font-lock-extra-managed-props))
 	  `(extend overline ,@(if outli-blend '(background))))
