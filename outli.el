@@ -1,11 +1,11 @@
 ;;; outli.el --- Org-like code outliner  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022  
+;; Copyright (C) 2022-2023
 
 ;; Author: J.D. Smith <jdtsmith@gmail.com>
 ;; URL: https://github.com/jdtsmith/outli
 ;; Package-Requires: ((emacs "27.1"))
-;; Version: 0.0.2
+;; Version: 0.0.3
 ;; Keywords: convenience, outlines, Org
 
 ;;; License:
@@ -188,7 +188,7 @@ command."
      (and (save-excursion
 	    (forward-line 0)
 	    (looking-at outline-regexp))
-	  (>= (match-end 0) (point))))
+	  (> (match-end 0) (point))))
    cmd))
 
 ;;;; Outline Commands
