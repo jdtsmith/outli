@@ -38,6 +38,10 @@ Configured defaults are:
 ## Speed keys
 Customize `outli-speed-commands` to alter or disable speed keys, which work at the beginning of heading lines only.  
 
+## Folding/unfolding automatically when hopping around buffers
+
+Try `reveal-mode`; see below.
+
 # FAQ
 - **How does this relate to outline-minor-mode?**  
  
@@ -62,11 +66,13 @@ Customize `outli-speed-commands` to alter or disable speed keys, which work at t
     - `STYLE`: A style flag: `nil` for default styling, `'none` for no styling, and `t` for uniform styling between stem and repeat char.  Can be omitted (defaults to `nil`).
     - `NO-BAR`: A flag for the overline bar: if non-`nil`, omit the overline.  Can be omitted (defaults to `nil`).
 
+
 # Tips
 - You can use arbitrary expressions for the stem and repeat chars; they'll get evaluated at run-time.
 - It's useful to target high-level modes like prog-mode or text-mode from which many modes inherit (see [mode-minder](https://github.com/jdtsmith/mode-minder) to get a list of your major mode heirarchy).
 - Try out the `h` key at headline start: it folds everything up to be no deeper than the current header's level. 
 - To prevent outli from being enabled in a given mode (or family of derived modes), just include `(MODE . nil)` in `outli-heading-config`.  By default, org-mode is excluded in this way.
+- Some emacs tools like isearch are smart about folding/unfolding text as you navigate through a buffer with them.  But not all.  To fix this, you can consider enabling `reveal-mode` in buffers where you use `outli`, then tools like `xref`, etc. will reveal folded targets, rehiding them when you navigate away.
 
 # Related Packages
 - outline-minor-mode: The built-in minor mode for outlining documents on which _outli_ builds. 
