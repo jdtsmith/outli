@@ -292,6 +292,7 @@ NOBAR is non-nil, omit the overlines."
       `(menu-item "" outline-cycle :filter outli--on-heading))
     ;; Shift-Tab: cycle buffer
     (define-key map (kbd "S-<tab>") #'outline-cycle-buffer)
+    (define-key map (kbd "<backtab>") #'outline-cycle-buffer)
     map))
 
 ;;;; Outli mode 
