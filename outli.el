@@ -95,7 +95,7 @@ which the current mode derives will match."
 			      (choice :tag "Stem" string sexp)
 			      (character :tag "Repeat Char")
 			      (choice :tag "Style"
-				      (const :tag "No Styling" 'none)
+				      (const :tag "No Styling" none)
 				      (const :tag "Uniform Style" t)
 				      (const :tag "Default Style" nil))
 			      (boolean :tag "Omit Overline")))))
