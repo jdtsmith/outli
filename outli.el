@@ -290,6 +290,8 @@ NOBAR is non-nil, omit the overlines."
     ;; Tab: cycle, if on heading
     (define-key map (kbd "<tab>")
       `(menu-item "" outline-cycle :filter outli--on-heading))
+    (define-key map (kbd "TAB")
+      `(menu-item "" outline-cycle :filter outli--on-heading))
     ;; Shift-Tab: cycle buffer
     (define-key map (kbd "S-<tab>") #'outline-cycle-buffer)
     (define-key map (kbd "<backtab>") #'outline-cycle-buffer)
