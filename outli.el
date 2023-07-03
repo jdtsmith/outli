@@ -5,7 +5,7 @@
 ;; Author: J.D. Smith <jdtsmith@gmail.com>
 ;; URL: https://github.com/jdtsmith/outli
 ;; Package-Requires: ((emacs "27.1"))
-;; Version: 0.0.5
+;; Version: 0.0.6
 ;; Keywords: convenience, outlines, Org
 
 ;;; License:
@@ -307,11 +307,11 @@ can be specified globally using the variables
     ;; Tab: cycle, if on heading
     (define-key map (kbd "<tab>")
       `(menu-item "" outline-cycle :filter outli--on-heading))
-    (define-key map (kbd "TAB")
+    (define-key map (kbd "TAB")	; for terminal emacs
       `(menu-item "" outline-cycle :filter outli--on-heading))
     ;; Shift-Tab: cycle buffer
     (define-key map (kbd "S-<tab>") #'outline-cycle-buffer)
-    (define-key map (kbd "<backtab>") #'outline-cycle-buffer)
+    (define-key map (kbd "<backtab>") #'outline-cycle-buffer) ; sometimes S-Tab=backtab
     map))
 
 ;;;; Outli mode 
