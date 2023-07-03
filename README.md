@@ -35,6 +35,10 @@ Configured defaults are:
 - **org-mode**: disabled
 - **others**: `comment-start` + a space, `*`
 
+## Style Defaults
+
+You can set defaults for the `STYLE` and `NOBAR` properties for all modes, which take effect if these parameters are omitted or `nil` in the config; see `outli-default-style` and `outli-default-nobar`. 
+
 ## Speed keys
 Customize `outli-speed-commands` to alter or disable speed keys, which work at the beginning of heading lines only.  
 
@@ -63,8 +67,8 @@ Try `reveal-mode`; see below.
     - `MAJOR-MODE`: A symbol for a major mode, or parent mode from which the current mode inherits, like `'text-mode` (note: omit the single apostrophe in the customize interface: it knows it's a symbol).
     - `STEM`: A string like `"# "`: the fixed "stem" of the headline pattern (omit quotes in customize interface).  Can also be an elisp expression which evaluates to a string.
     - `REPEAT-CHAR`: A _character_ like `?*`: the repeating character which specifies the level of a headline (again: no `?` needed in customize, just type the character).  Can also be an elisp expression which evaluates to a character. 
-    - `STYLE`: A style flag: `nil` for default styling, `'none` for no styling, and `t` for uniform styling between stem and repeat char.  Can be omitted (defaults to `nil`).
-    - `NO-BAR`: A flag for the overline bar: if non-`nil`, omit the overline.  Can be omitted (defaults to `nil`).
+    - `STYLE`: A style flag: `nil` for default (maximum) styling, the symbol `none` for no special styling of headlines, and `t` for matched styling between stem and repeat char.  Can be omitted (defaults to `nil`).  See also `outli-default-style`. 
+    - `NO-BAR`: A flag for the overline bar: if non-`nil`, omit the overline.  Can be omitted (defaults to `nil`).  See also `outli-default-nobar`. 
 
 
 # Tips
