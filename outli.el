@@ -238,7 +238,7 @@ command."
       (save-excursion (newline-and-indent)))
     (run-hooks 'outline-insert-heading-hook)))
 
-   ;;;; Fontification
+;;;; Fontification 
 (defun outli-fontify-background-blend (fg)
   "Compute blended background color for headline match based on foreground FG.
 Returns blended background color."
@@ -366,7 +366,7 @@ can be specified globally using the variables
     (outline-minor-mode -1)
     (outli-unfontify)))
 
-;;;; footer
+;;;; Footer
 (provide 'outli)
 
 ;;; outli.el ends here
