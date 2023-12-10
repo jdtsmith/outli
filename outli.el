@@ -106,11 +106,11 @@ which the current mode derives will match."
   :type 'boolean)
   
 (defcustom outli-default-style nil
-    "Default STYLE to use, if not set in `outli-heading-config'."
-    :group 'outli
-    :type '(choice (const :tag "Use heading-config" nil)
-		   (const :tag "None" none)
-		   (const :tag "Stem Matched" t)))
+  "Default STYLE to use, if not set in `outli-heading-config'."
+  :group 'outli
+  :type '(choice (const :tag "Use heading-config" nil)
+		 (const :tag "None" none)
+		 (const :tag "Stem Matched" t)))
 
 (defcustom outli-default-nobar nil
   "If set, NOBAR will be implied for all modes."
