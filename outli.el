@@ -100,7 +100,7 @@ which the current mode derives will match."
 				      (const :tag "Default Style" nil))
 			      (boolean :tag "Omit Overline")))))
 
-(defcustom outli-allow-indented-headlines t
+(defcustom outli-allow-indented-headlines nil
   "Whether to allow initial space at the beginning of the line."
   :group  'outli
   :type 'boolean)
