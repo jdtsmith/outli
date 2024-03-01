@@ -45,7 +45,7 @@
 (require 'org-keys)
 (require 'org-faces)
 
-;;;; Variables 
+;;;; Variables
 (defgroup outli nil
   "Simple comment outlining."
   :tag "Outli"
@@ -78,7 +78,7 @@ with entries for the first form:
 
 or
 
- (MAJOR-MODE . nil) 
+ (MAJOR-MODE . nil)
 
 which will disable outli in any modes derived from this mode.
 
@@ -194,6 +194,7 @@ command."
 
 (defun outli--at-heading (cmd)
   (and
+   outline-regexp
    (if (bolp)
        (looking-at outline-regexp)
      (and (save-excursion
