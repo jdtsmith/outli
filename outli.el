@@ -258,6 +258,13 @@ Returns blended background color."
   (let ((mode-string (if (eq mode t) "" (concat (symbol-name mode) "-"))))
     (intern (format "outli-%s-%s%d" (if repeat "repeat" "stem") mode-string depth))))
 
+(defun outli-reset-all-faces ()
+  "Reset all faces defined by outli.
+Useful for calling after theme changes."
+  (interactive)
+  (cl-loop for (mode stem _ style nobar) in outli-heading-config
+	   if stem do (outli--setup-faces style nobar mode)))
+
 (defun outli--setup-faces (&optional style nobar mode)
   "Setup outli faces based on the outline faces.
 STYLE, NOBAR, and MODE are as in `outli-fontify-headlines'."
