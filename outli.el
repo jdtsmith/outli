@@ -43,7 +43,6 @@
 (require 'outline)
 (require 'color)
 (require 'org-keys)
-(require 'org-faces)
 
 ;;;; Variables
 (defgroup outli nil
@@ -254,45 +253,70 @@ Returns blended background color."
 		      cols)))))
 (defvar-local outli-font-lock-keywords nil)
 
-(defun outli-fontify-headlines (&optional style nobar)
+(defun outli--face-name (mode depth &optional repeat)
+  "Return the face symbol for MODE, DEPTH, and REPEAT"
+  (let ((mode-string (if (eq mode t) "" (concat (symbol-name mode) "-"))))
+    (intern (format "outli-%s-%s%d" (if repeat "repeat" "stem") mode-string depth))))
+
+(defun outli--setup-faces (&optional style nobar mode)
+  "Setup outli faces based on the outline faces.
+STYLE, NOBAR, and MODE are as in `outli-fontify-headlines'."
+  (let ((style (or style outli-default-style))
+	(nobar (or nobar outli-default-nobar)))
+    (cl-loop for i downfrom 8 to 1
+	     with ot = (unless nobar '(:overline t))
+	     for ol-face = (intern-soft (format "outline-%d" i))
+	     for otl-stem-face = (outli--face-name mode i)
+	     for fg = (face-attribute ol-face :foreground nil t)
+	     for blend = (outli-fontify-background-blend fg)
+	     for ofg = (unless nobar `(:overline ,fg))
+	     do
+	     (face-spec-set otl-stem-face
+			    (if outli-blend
+				`((t (:background ,blend ,@ofg)))
+			      `((t (,ofg)))))
+	     (unless style
+	       (face-spec-set
+		(outli--face-name mode i 'repeat)
+		`((t (:inherit ,ol-face :background ,blend ,@ot))))))))
+
+(defun outli-fontify-headlines (&optional style nobar mode)
   "Calculate and enable font-lock regexps to match headings.
 If STYLE is non-nil, do not style the stem and depth chars
 differently.  If it is the symbol none, omit all styling.  If
-NOBAR is non-nil, omit the overlines.  Note that STYLE and NOBAR
-can be specified globally using the variables
-`outli-default-style' and `outli-default-nobar'."
+NOBAR is non-nil, omit the overlines.  MODE is the symbol for the
+mode which this styling applies to, or t for the default.  Note
+that STYLE and NOBAR can be specified globally using the
+variables `outli-default-style' and `outli-default-nobar'."
   (let ((style (or style outli-default-style))
 	(nobar (or nobar outli-default-nobar)))
+    (outli--setup-faces style nobar mode)
     (unless (eq style 'none)
       (font-lock-add-keywords
        nil
        (setq outli-font-lock-keywords
 	     (cl-loop for i downfrom 8 to 1
-		      for ol-face = (intern-soft (format "org-level-%d" i))
-		      for fg = (face-attribute ol-face :foreground nil t)
-		      with ot = (unless nobar '(:overline t))
-		      for header-highlight = `(4 '(:inherit ,ol-face :extend t ,@ot) t)
-		      for extra-highlight =
-		      
-		      (let ((ofg (unless nobar `(:overline ,fg))))
-			(if outli-blend
-			    (let ((blend (outli-fontify-background-blend fg)))
-			      (if style
-				  `((1 '(:background ,blend ,@ofg) append))
-				`((3 '(:inherit ,ol-face :background ,blend ,@ot) t)
-				  (2 '(:background ,blend ,@ofg) append))))
-			  `((1 '(,@ofg) append))))
+		      for ol-face = (intern-soft (format "outline-%d" i))
 		      for hrx = (rx-to-string
 				 `(and
 				   bol ,@(if outli-allow-indented-headlines '((* space)))
-				   (group (group (literal ,outli-heading-stem))
-					  (group (= ,i ,outli-heading-char)))
-				   (group ?\s (* nonl) (or ?\n eol)))
+				   (group (group (literal ,outli-heading-stem)) ; 1=2+3 2 = stem
+					  (group (= ,i ,outli-heading-char)))   ; 3 = repeat
+				   (group ?\s (* nonl) (or ?\n eol))) ; 4 = rest of headline
 				 t)
-		      collect `(,hrx ,header-highlight ,@extra-highlight))))
-    (mapc (lambda (x) (cl-pushnew x font-lock-extra-managed-props))
-	  `(extend overline ,@(if outli-blend '(background))))
-    (font-lock-flush))))
+		      for header-highlight =
+		      `(4 '(:inherit ,ol-face :extend t
+				     ,@(unless nobar '(:overline t)))
+			  t)
+		      for stem-highlight = 
+		      (if (or style (not outli-blend))
+			  `((1 ',(outli--face-name mode i) append)) ; all same
+			`((2 ',(outli--face-name mode i) append)
+			  (3 ',(outli--face-name mode i 'repeat) t)))
+		      collect `(,hrx ,header-highlight ,@stem-highlight))))
+      (mapc (lambda (x) (cl-pushnew x font-lock-extra-managed-props))
+	    `(extend overline ,@(if outli-blend '(background))))
+      (font-lock-flush))))
 
 (defun outli-unfontify ()
   "Remove existing fontification."
@@ -343,7 +367,7 @@ can be specified globally using the variables
 		       `(menu-item "" ,func :filter outli--at-heading))))
 
 	  ;; Setup the heading matchers
-	  (pcase-let ((`(_ ,stem ,rchar ,style ,nobar)
+	  (pcase-let ((`(,mode ,stem ,rchar ,style ,nobar)
 		       (or config
 			   (assq t outli-heading-config)
 			   '(t nil nil nil))))
@@ -362,7 +386,7 @@ can be specified globally using the variables
 			   outline-heading-alist))
 	    (cl-pushnew `("Headings" ,(rx bol (regexp outline-regexp) (group-n 2 (* nonl) eol)) 2)
 			imenu-generic-expression)
-	    (outli-fontify-headlines style nobar))
+	    (outli-fontify-headlines style nobar mode))
 	  (outline-minor-mode 1)))
     (outline-minor-mode -1)
     (outli-unfontify)))
