@@ -254,14 +254,14 @@ Returns blended background color."
 (defvar-local outli-font-lock-keywords nil)
 
 (defun outli--face-name (mode depth &optional repeat)
-  "Return the face symbol for MODE, DEPTH, and REPEAT"
+  "Return the face symbol for MODE, DEPTH, and REPEAT."
   (let ((mode-string (if (eq mode t) "" (concat (symbol-name mode) "-"))))
     (intern (format "outli-%s-%s%d" (if repeat "repeat" "stem") mode-string depth))))
 
-(defun outli-reset-all-faces ()
+(defun outli-reset-all-faces (&rest _r)
   "Reset all faces defined by outli.
 Useful for calling after theme changes."
-  (interactive)
+  (interactive (lambda (i) (advice-eval-interactive-spec i)))
   (cl-loop for (mode stem _ style nobar) in outli-heading-config
 	   if stem do (outli--setup-faces style nobar mode)))
 
