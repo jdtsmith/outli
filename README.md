@@ -16,7 +16,7 @@ Not yet in a package database; simply clone and point `use-package` at the corre
 ```elisp
 (use-package outli
   :load-path "~/code/emacs/outli"
-  :after lispy ; only if you use lispy; it also sets speed keys on headers!
+  ;:after lispy ; uncomment only if you use lispy; it also sets speed keys on headers!
   :bind (:map outli-mode-map ; convenience key to get back to containing heading
 	      ("C-c C-p" . (lambda () (interactive) (outline-back-to-heading))))
   ;; if you want load-theme to update outli faces:
