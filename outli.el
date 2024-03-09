@@ -258,6 +258,10 @@ Returns blended background color."
   (let ((mode-string (if (eq mode t) "" (concat (symbol-name mode) "-"))))
     (intern (format "outli-%s-%s%d" (if repeat "repeat" "stem") mode-string depth))))
 
+(defun outli--handle-theme-change (_theme)
+  "Reset all faces on theme change."
+  (outli-reset-all-faces))
+
 (defun outli-reset-all-faces (&rest _r)
   "Reset all faces defined by outli.
 Useful for calling after theme changes."
@@ -371,8 +375,8 @@ variables `outli-default-style' and `outli-default-nobar'."
 				((functionp com) com)
 				((consp com) (eval `(lambda () (interactive) ,com))))))
 		     (define-key outli-mode-map (kbd key)
-		       `(menu-item "" ,func :filter outli--at-heading))))
-
+				 `(menu-item "" ,func :filter outli--at-heading))))
+	  (add-hook 'enable-theme-functions #'outli--handle-theme-change)
 	  ;; Setup the heading matchers
 	  (pcase-let ((`(,mode ,stem ,rchar ,style ,nobar)
 		       (or config
