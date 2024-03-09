@@ -22,7 +22,7 @@ Not yet in a package database; simply clone and point `use-package` at the corre
   :hook ((prog-mode text-mode) . outli-mode)) ; or whichever modes you prefer
 ```
 
-You should probably not enable `outli` in `org-mode` (which by default is prevented), or with other packages which operate on headings or use similar short bindings, like outshine or pdf-tools.
+You should probably not enable `outli` in `org-mode` (which by default is prevented), or with other packages which operate on headings or use similar short bindings, like outshine or pdf-tools.  If you want to disable individual modes within some mode hierarchy, while disabling it for individual modes, you can add those modes to `outli-heading-config` with a disable entry; see below.
 
 # Customization
 ## Headline style
