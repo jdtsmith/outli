@@ -19,8 +19,6 @@ Not yet in a package database; simply clone and point `use-package` at the corre
   ;:after lispy ; uncomment only if you use lispy; it also sets speed keys on headers!
   :bind (:map outli-mode-map ; convenience key to get back to containing heading
 	      ("C-c C-p" . (lambda () (interactive) (outline-back-to-heading))))
-  ;; if you want load-theme to update outli faces:
-  :config (advice-add 'load-theme :after #'outli-reset-all-faces) 
   :hook ((prog-mode text-mode) . outli-mode)) ; or whichever modes you prefer
 ```
 
@@ -58,7 +56,11 @@ Try `reveal-mode`; see below.
 
   Mostly just conceptually.  Outshine also provides (different) speed keys, for example.  And a lot more, much of which isn't as relevant to modern emacs.  Since it builds more directly on the built-in capabilities of outline-minor-mode, `outli` is a _much_ smaller and simpler package. 
 
-- **I wish `outli` styling would update when I change themes**: See the configuration for advice to `load-theme`, above. 
+- **I wish `outli` styling would update when I change themes**: This should happen automatically in Emacs 29.1 and later.  For earlier version, add the following to your `use-package` stanza:
+
+   ```elisp
+      :config (advice-add 'load-theme :after #'outli-reset-all-faces) ```
+   ```
 
 - **What is the syntax of `outli-heading-config`?** 
 
