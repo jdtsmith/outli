@@ -147,7 +147,7 @@ to blend with the background."
     ("r" . outline-demote)
     ("l" . outline-promote)
     ("i" . outli-insert-heading-respect-content)
-    ("@" . outline-mark-subtree) 
+    ("@" . outline-mark-subtree)
     ("?" . outli-speed-command-help))
   "Alist of speed commands.
 
@@ -179,19 +179,23 @@ command."
 
 ;;;; Outline Headings
 (defun outli-heading-regexp ()
+  "Compute heading regexp based on stem and repeat char."
   (when (and outli-heading-stem outli-heading-char)
     (rx-to-string `(and ,@(if outli-allow-indented-headlines '((* space)))
-		    (group ,outli-heading-stem (+ ,outli-heading-char) ?\s)))))
+			(group ,outli-heading-stem (+ ,outli-heading-char) ?\s)))))
 
 (defun outli-indent-level ()
+  "Return the indent level for the most recently matched heading."
   (if-let ((match (match-string 1)))
       (or (cdr (assoc match outline-heading-alist))
-	(- (length match) (length outli-heading-stem) 1))))
+	  (- (length match) (length outli-heading-stem) 1))))
 
 (defun outli--on-heading (cmd)
+  "Return the argument CMD if on heading."
   (if (outline-on-heading-p) cmd))
 
 (defun outli--at-heading (cmd)
+  "Return argument CMD if on a heading line."
   (and
    outline-regexp
    (if (bolp)
@@ -238,7 +242,7 @@ command."
       (save-excursion (newline-and-indent)))
     (run-hooks 'outline-insert-heading-hook)))
 
-;;;; Fontification 
+;;;; Fontification
 (defun outli-fontify-background-blend (fg)
   "Compute blended background color for headline match based on foreground FG.
 Returns blended background color."
@@ -251,6 +255,7 @@ Returns blended background color."
 				    (+ (* a frac)
 				       (* b (- 1.0 frac))))
 		      cols)))))
+
 (defvar-local outli-font-lock-keywords nil)
 
 (defun outli--face-name (mode depth &optional repeat)
