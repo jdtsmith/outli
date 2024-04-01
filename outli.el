@@ -284,17 +284,18 @@ STYLE, NOBAR, and MODE are as in `outli-fontify-headlines'."
 	     for ol-face = (intern-soft (format "outline-%d" i))
 	     for otl-stem-face = (outli--face-name mode i)
 	     for fg = (face-attribute ol-face :foreground nil t)
-	     for blend = (outli-fontify-background-blend fg)
+	     for blend = (and outli-blend (outli-fontify-background-blend fg))
 	     for ofg = (unless nobar `(:overline ,fg))
 	     do
 	     (face-spec-set otl-stem-face
-			    (if outli-blend
+			    (if blend
 				`((t (:background ,blend ,@ofg)))
 			      `((t (,ofg)))))
 	     (unless style
 	       (face-spec-set
 		(outli--face-name mode i 'repeat)
-		`((t (:inherit ,ol-face :background ,blend ,@ot))))))))
+		`((t (:inherit ,ol-face
+			       ,@(and blend `(:background ,blend)) ,@ot))))))))
 
 (defun outli-fontify-headlines (&optional style nobar mode)
   "Calculate and enable font-lock regexps to match headings.
