@@ -267,10 +267,10 @@ Returns blended background color."
   "Reset all faces on theme change."
   (outli-reset-all-faces))
 
-(defun outli-reset-all-faces (&rest _r)
+(defun outli-reset-all-faces ()
   "Reset all faces defined by outli.
 Useful for calling after theme changes."
-  (interactive (lambda (i) (advice-eval-interactive-spec i)))
+  (interactive)
   (cl-loop for (mode stem _ style nobar) in outli-heading-config
 	   if stem do (outli--setup-faces style nobar mode)))
 
