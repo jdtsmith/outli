@@ -1,6 +1,7 @@
 # outli
 Simple and stylish comment-based outlines with speed keys for Emacs.
-![image](https://user-images.githubusercontent.com/93749/190755666-69ca250c-476b-41c9-a26a-f9c12d167c99.png)
+<img width="1052" alt="image" src="https://github.com/user-attachments/assets/a6e35266-f283-4438-9fcb-c4b9a3d0a6f8">
+
 
 `outli` is a simple Emacs outliner for code, documents, and more which provides hierarchical hide/show, styles your headings, and emulates org-mode navigation and structure editing.  It builds on the built-in `outline-minor-mode` and is simple by design, providing just a few key additional features beyond what outline already offers:
 
