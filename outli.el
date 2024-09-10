@@ -325,7 +325,7 @@ variables `outli-default-style' and `outli-default-nobar'."
 		      `(4 '(:inherit ,ol-face :extend t
 				     ,@(unless nobar '(:overline t)))
 			  t)
-		      for stem-highlight = 
+		      for stem-highlight =
 		      (if (or style (not outli-blend))
 			  `((1 ',(outli--face-name mode i) append)) ; all same
 			`((2 ',(outli--face-name mode i) append)
@@ -391,10 +391,12 @@ variables `outli-default-style' and `outli-default-nobar'."
 	    (setq outli-heading-char
 		  (or (if (consp rchar) (eval rchar) (if (characterp rchar) rchar)) ?*)
 		  outli-heading-stem
-		  (or (and (consp stem) (eval stem)) (and (stringp stem) stem) "# ")
-		  outline-regexp (outli-heading-regexp)
-		  outline-heading-end-regexp "\n"
-		  outline-level #'outli-indent-level)
+		  (or (and (consp stem) (eval stem)) (and (stringp stem) stem) "# "))
+	    (setq-local
+	     outline-level #'outli-indent-level
+	     outline-regexp (outli-heading-regexp)
+	     outline-heading-end-regexp "\n"
+	     outline-search-function nil)
 	    ;; pre-seed the level alist for efficiency
 	    (cl-loop for level downfrom 8 to 1 do
 		     (push (cons (concat outli-heading-stem
