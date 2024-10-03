@@ -53,6 +53,7 @@
 (defcustom outli-heading-config
   '((emacs-lisp-mode ";;" ?\; t)
     (tex-mode "%%" ?% t)
+    (markdown-mode "" ?# none t)
     (org-mode . nil)
     (t (let* ((c (or comment-start "#"))
 	      (space (unless (eq (aref c (1- (length c))) ?\s) " ")))
