@@ -33,6 +33,7 @@ Configured defaults are:
 
 - **emacs-lisp-mode**: stem `;;`, repeat-char `;`
 - **tex-mode**: `%%`, `%`
+- **markdown-mode**: (empty stem), `#` 
 - **org-mode**: disabled
 - **all others**: `comment-start` + a space, `*`
 
