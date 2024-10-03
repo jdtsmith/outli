@@ -5,7 +5,7 @@
 ;; Author: J.D. Smith <jdtsmith@gmail.com>
 ;; URL: https://github.com/jdtsmith/outli
 ;; Package-Requires: ((emacs "27.1"))
-;; Version: 0.2.0
+;; Version: 0.2.1
 ;; Keywords: convenience, outlines, Org
 
 ;;; License:
