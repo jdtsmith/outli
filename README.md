@@ -87,13 +87,21 @@ Try `reveal-mode`; see below.
 - Try out the `h` key at headline start: it folds everything up to be no deeper than the current header's level. 
 - To prevent `outli` from being enabled in a given mode (or family of derived modes), just include `(MODE . nil)` in `outli-heading-config`.  By default, `org-mode` is excluded in this way.
 - Some emacs tools like `isearch` are smart about folding/unfolding text as you navigate through a buffer with them.  But not all.  To fix this, you can consider enabling `reveal-mode` in buffers where you use `outli`, then tools like `xref`, etc. will reveal folded targets, re-hiding them when you navigate away.
-- I recommend `consult-heading` for quickly browsing outli headings.  If you use `consult-imenu`, you might like to separate headings, by adding this to the `consult-imenu` config:
+- I recommend `consult-org-heading` and/or `consult-outline` for quickly browsing outli headings.  You can even combine these like:
+   ```elisp
+   (defun my/consult-org-heading-or-outline ()
+    (interactive)
+    (if (derived-mode-p 'org-mode)
+        (consult-org-heading)
+      (consult-outline)))
+   ```
+
+   If you use `consult-imenu`, you might like to separate headings, by adding this to the `consult-imenu` config:
 
    ```elisp
      (push '(?h "Headings")
         (plist-get (cdr (assoc 'emacs-lisp-mode consult-imenu-config)) :types))
    ```
-
 
 # Related Packages
 - `outline-minor-mode`: The built-in minor mode for outlining documents on which `outli` builds. 
