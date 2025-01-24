@@ -5,7 +5,7 @@
 ;; Author: J.D. Smith <jdtsmith@gmail.com>
 ;; URL: https://github.com/jdtsmith/outli
 ;; Package-Requires: ((emacs "27.1"))
-;; Version: 0.2.1
+;; Version: 0.2.2
 ;; Keywords: convenience, outlines, Org
 
 ;;; License:
@@ -39,10 +39,8 @@
 ;; only.
 
 ;;; Code:
-
 (require 'outline)
 (require 'color)
-(require 'org-keys)
 
 ;;;; Variables
 (defgroup outli nil
@@ -343,12 +341,29 @@ variables `outli-default-style' and `outli-default-nobar'."
   (font-lock-flush))
 
 ;;;; Key Bindings
+(defun outli--print-speed-command (speed-command)
+  "Print information about SPEED-COMMAND in help buffer.
+Based on `org--print-speed-command'."
+  (if (> (length (car speed-command)) 1)
+      (progn
+	(princ "\n")
+	(princ (car speed-command))
+	(princ "\n")
+	(princ (make-string (length (car speed-command)) ?-))
+	(princ "\n"))
+    (princ (car speed-command))
+    (princ "   ")
+    (if (symbolp (cdr speed-command))
+	(princ (symbol-name (cdr speed-command)))
+      (prin1 (cdr speed-command)))
+    (princ "\n")))
+
 (defun outli-speed-command-help ()
   "Show the available speed commands."
   (interactive)
   (with-output-to-temp-buffer "*Help*"
     (princ "Speed commands\n==============\n")
-    (mapc #'org-print-speed-command outli-speed-commands))
+    (mapc #'outli--print-speed-command outli-speed-commands))
   (with-current-buffer "*Help*"
     (setq truncate-lines t)))
 
