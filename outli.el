@@ -262,7 +262,7 @@ Returns blended background color."
   (let ((mode-string (if (eq mode t) "" (concat (symbol-name mode) "-"))))
     (intern (format "outli-%s-%s%d" (if repeat "repeat" "stem") mode-string depth))))
 
-(defun outli--handle-theme-change (_theme)
+(defun outli-handle-theme-change (_theme)
   "Reset all faces on theme change."
   (outli-reset-all-faces))
 
@@ -379,7 +379,7 @@ Based on `org--print-speed-command'."
     (define-key map (kbd "<backtab>") #'outline-cycle-buffer) ; sometimes S-Tab=backtab
     map))
 
-;;;; Outli mode 
+;;;; Outli mode
 ;;;###autoload
 (define-minor-mode outli-mode
   "Simple outline mode interaction based on comment-headings."
@@ -398,7 +398,7 @@ Based on `org--print-speed-command'."
 				((consp com) (eval `(lambda () (interactive) ,com))))))
 		     (define-key outli-mode-map (kbd key)
 				 `(menu-item "" ,func :filter outli--at-heading))))
-	  (add-hook 'enable-theme-functions #'outli--handle-theme-change)
+	  (add-hook 'enable-theme-functions #'outli-handle-theme-change)
 	  ;; Setup the heading matchers
 	  (pcase-let ((`(,mode ,stem ,rchar ,style ,nobar)
 		       (or config

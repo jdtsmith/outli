@@ -62,7 +62,7 @@ Try `reveal-mode`; see below.
 - **I wish `outli` styling would update when I change themes**: This should happen automatically in Emacs 29.1 and later.  For earlier version, add the following to your `use-package` stanza:
 
    ```elisp
-      :config (advice-add 'load-theme :after #'outli-reset-all-faces) ```
+      :config (advice-add 'load-theme :after #'outli-handle-theme-change) ```
    ```
 
 - **What is the syntax of `outli-heading-config`?** 
