@@ -5,7 +5,7 @@
 ;; Author: J.D. Smith <jdtsmith@gmail.com>
 ;; URL: https://github.com/jdtsmith/outli
 ;; Package-Requires: ((emacs "27.1"))
-;; Version: 0.2.2
+;; Version: 0.2.3
 ;; Keywords: convenience, outlines, Org
 
 ;;; License:
@@ -25,12 +25,13 @@
 
 ;;; Commentary:
 
-;; outli-mode is a simple minor-mode on top of outline-minor-mode
-;; which supports configurable special comment lines as level-aware
-;; outline headings which can be collapsed, navigated, moved, etc.
-;; outli styles headings for easy level recognition and provides a
-;; org-mode-like header navigation and editing capabilities, including
-;; speed keys activated at the start of headings.
+;; outli-mode is a simple minor-mode using outline-minor-mode to
+;; support configurable special comment lines as level-aware outline
+;; headings.  As in org-mode, headings can be collapsed, navigated,
+;; moved, etc.  outli styles headings for easy level recognition and
+;; provides a org-mode-like header navigation and editing
+;; capabilities, including "speed keys" which are activated at the
+;; start of headings.
 ;; 
 ;; Customize `outli-heading-config' to set the "stem" and "repeat"
 ;; character for comment-based headings and to influence how the
@@ -289,7 +290,7 @@ STYLE, NOBAR, and MODE are as in `outli-fontify-headlines'."
 	     (face-spec-set otl-stem-face
 			    (if blend
 				`((t (:background ,blend ,@ofg)))
-			      `((t (,ofg)))))
+			      `((t ,@(and ofg `(,ofg))))))
 	     (unless style
 	       (face-spec-set
 		(outli--face-name mode i 'repeat)
