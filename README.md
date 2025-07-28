@@ -1,4 +1,6 @@
 # outli
+[![MELPA](https://melpa.org/packages/outli-badge.svg)](https://melpa.org/#/outli)
+
 Simple and stylish comment-based outlines with speed keys for Emacs.
 <img width="1052" alt="image" src="https://github.com/user-attachments/assets/a6e35266-f283-4438-9fcb-c4b9a3d0a6f8">
 
@@ -13,11 +15,10 @@ Simple and stylish comment-based outlines with speed keys for Emacs.
 - Exposes headings to imenu.  A fast imenu browser like [consult-imenu](https://github.com/minad/consult) is recommended. 
 
 # Configuration
-Not yet in a package database; simply clone and point `use-package` at the correct path (or use [straight](https://github.com/radian-software/straight.el), etc.).
+`outli` is in MELPA.  Either install from there, or clone and point `use-package` at the correct path (or use [straight](https://github.com/radian-software/straight.el), etc.).
 
 ```elisp
 (use-package outli
-  :load-path "~/code/emacs/outli"
   ;:after lispy ; uncomment only if you use lispy; it also sets speed keys on headers!
   :bind (:map outli-mode-map ; convenience key to get back to containing heading
 	      ("C-c C-p" . (lambda () (interactive) (outline-back-to-heading))))
