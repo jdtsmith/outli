@@ -1,4 +1,4 @@
-# outli — Simple, stylish outlines with speed keys for Emacs
+# outli — Simple, stylish org-like outlines for any Emacs buffer
 [![MELPA](https://melpa.org/packages/outli-badge.svg)](https://melpa.org/#/outli)
 
 <img width="1052" alt="image" src="https://github.com/user-attachments/assets/a6e35266-f283-4438-9fcb-c4b9a3d0a6f8">
