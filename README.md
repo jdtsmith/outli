@@ -1,20 +1,20 @@
-# outli
+# outli — Simple, stylish outlines with speed keys for Emacs
 [![MELPA](https://melpa.org/packages/outli-badge.svg)](https://melpa.org/#/outli)
 
-Simple and stylish comment-based outlines with speed keys for Emacs.
 <img width="1052" alt="image" src="https://github.com/user-attachments/assets/a6e35266-f283-4438-9fcb-c4b9a3d0a6f8">
 
-`outli` is a simple Emacs outliner for code, documents, and more which provides hierarchical hide/show, styles your headings, and emulates org-mode navigation and structure editing.  It builds on the built-in `outline-minor-mode` and is simple by design, providing just a few key additional features beyond what outline already offers:
+`outli` is a simple Emacs outliner for code, documents, or really any buffer. It provides hierarchical hide/show, styles your headings nicely, and emulates the `org-mode` navigation and structure editing you already know.  `outli` is based on the built-in `outline-minor-mode` and is simple by design, providing just a few key additional features beyond what outline already offers:
 
 - Configurable heading syntax based on the concept of a `stem` (fixed first characters) and `repeat-char` (the number of which determines a heading's depth).  Example level-two headers include classics such as `;;;;` and `# **`, but anything's possible.
-- Default header syntax based on comment char that just works for most modes. 
+- Default header syntax based on comment char that _just works_ for most modes. 
 - Header style options including color-matched overline and blended background color for the initial heading info.
 - `Tab` and `Shift-Tab` work just like you'd expect from org-mode to toggle headings or document visibility. 
-- _Speed keys_ mirroring org-mode for easy navigation, visibility, and structure editing at headlines.  Hit `?` for the list of available keys.   Additions include `h` to hide sub-levels below the current level, and `1`-`5` to specify such a level directly. 
+- _Speed keys_ mirroring org-mode for easy navigation, visibility, and structure editing at headlines.  Hit `?` for the list of available keys.
+- Speed key additions include `h` to hide sub-levels below the current level, and `1`-`5` to specify such a level directly from any heading.
 - Exposes headings to imenu.  A fast imenu browser like [consult-imenu](https://github.com/minad/consult) is recommended. 
 
 # Configuration
-`outli` is in MELPA.  Either install from there, or clone and point `use-package` at the correct path (or use [straight](https://github.com/radian-software/straight.el), etc.).
+`outli` is on MELPA.  Either install from there, or clone and point `use-package` at the correct path (or use [straight](https://github.com/radian-software/straight.el), etc.).
 
 ```elisp
 (use-package outli
